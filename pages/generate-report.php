@@ -38,12 +38,21 @@ $sql = "
         a.rawObservation,
         a.deviationDescription,
         a.priority,
-        GROUP_CONCAT(s.name ORDER BY s.name SEPARATOR ', ') AS sida_namn
+        a.atgarda_text,
+        GROUP_CONCAT(s.name ORDER BY s.name SEPARATOR ', ') AS sida_namn,
+        GROUP_CONCAT(
+    CONCAT(w.code, ' (', w.level, ')')
+    SEPARATOR ', '
+    ) AS wcag_list
     FROM Avvikelse a
     LEFT JOIN sida_has_Avvikelse sha
         ON a.idAvvikelse = sha.Avvikelse_idAvvikelse
     LEFT JOIN sida s
         ON sha.sida_ID = s.ID
+    LEFT JOIN Avvikelse_has_WCAG ahw
+        ON a.idAvvikelse = ahw.Avvikelse_idAvvikelse
+    LEFT JOIN WCAG w
+        ON ahw.WCAG_id = w.id
     WHERE a.rapport_ID = :rapport_ID
     GROUP BY
         a.idAvvikelse,
@@ -59,7 +68,7 @@ $sql = "
         a.chapter_2,
         a.chapter_3,
         a.title
-";
+    ";
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute([
@@ -225,10 +234,10 @@ foreach ($findings as $finding) {
                             <p><?= nl2br(htmlspecialchars($finding['deviationDescription'])) ?></p>
 
                             <span class="label">Åtgärda</span>
-                            <p>Här kan du senare skriva ut åtgärdsförslag från databasen när vi lagt till det som egen struktur.</p>
+                            <p><?= nl2br(htmlspecialchars($finding['atgarda_text'] ?? '')) ?></p>
 
                             <span class="label">WCAG</span>
-                            <p>Här kan du senare skriva ut WCAG-koppling när vi lagt till den relationen i databasen.</p>
+                            <p><?= htmlspecialchars($finding['wcag_list'] ?? 'Ej angivet') ?></p>
                         </article>
                     <?php endforeach; ?>
                 <?php endforeach; ?>

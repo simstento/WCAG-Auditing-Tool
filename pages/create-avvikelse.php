@@ -3,12 +3,17 @@ declare(strict_types=1);
 
 require __DIR__ . '/../src/db.php';
 
+$stmtWcag = $pdo->query("SELECT id, code, title, level FROM WCAG ORDER BY code");
+$wcagList = $stmtWcag->fetchAll();
+
 $rapportId = 1; // tillfälligt hårdkodat för test
 
 // Hämta sidor som tillhör rapporten
 $stmt = $pdo->prepare("SELECT ID, name FROM sida WHERE rapport_ID = :rapport_ID ORDER BY name");
 $stmt->execute([':rapport_ID' => $rapportId]);
 $sidor = $stmt->fetchAll();
+
+$selectedWcag = [];
 
 $errors = [];
 $success = '';
@@ -20,10 +25,12 @@ $kapitel3 = '';
 $rawObservation = '';
 $deviationDescription = '';
 $priority = '';
+$atgardaText = '';
 $selectedSidor = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = trim($_POST['title'] ?? '');
+    $atgardaText = trim($_POST['atgarda_text'] ?? '');
     $kapitel1 = trim($_POST['kapitel_1'] ?? '');
     $kapitel2 = trim($_POST['kapitel_2'] ?? '');
     $kapitel3 = trim($_POST['kapitel_3'] ?? '');
@@ -31,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $deviationDescription = trim($_POST['deviationDescription'] ?? '');
     $priority = trim($_POST['priority'] ?? '');
     $selectedSidor = $_POST['sidor'] ?? [];
+    $selectedWcag = $_POST['wcag'] ?? [];
 
     if ($title === '') {
         $errors[] = 'Titel måste anges.';
@@ -51,6 +59,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($selectedSidor)) {
         $errors[] = 'Minst en sida måste väljas.';
     }
+    if ($atgardaText === '') {
+    $errors[] = 'Åtgärda måste anges.';
+}
+if (empty($selectedWcag)) {
+    $errors[] = 'Minst ett WCAG-kriterium måste väljas.';
+}
 
     if (empty($errors)) {
         try {
@@ -66,7 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     rawObservation,
                     deviationDescription,
                     rapport_ID,
-                    priority
+                    priority,
+                    atgarda_text
                 ) VALUES (
                     :chapter_1,
                     :chapter_2,
@@ -75,7 +90,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     :rawObservation,
                     :deviationDescription,
                     :rapport_ID,
-                    :priority
+                    :priority,
+                    :atgarda_text
                 )
             ");
 
@@ -87,7 +103,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':rawObservation' => $rawObservation,
                 ':deviationDescription' => $deviationDescription,
                 ':rapport_ID' => $rapportId,
-                ':priority' => $priority
+                ':priority' => $priority,
+                ':atgarda_text' => $atgardaText
             ]);
 
             $avvikelseId = (int)$pdo->lastInsertId();
@@ -117,6 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $rawObservation = '';
             $deviationDescription = '';
             $priority = '';
+            $atgardaText = '';
             $selectedSidor = [];
 
         } catch (Throwable $e) {
@@ -125,6 +143,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+$insertWcag = $pdo->prepare("
+    INSERT INTO Avvikelse_has_WCAG (Avvikelse_idAvvikelse, WCAG_id)
+    VALUES (:avvikelse_ID, :wcag_ID)
+");
+
+foreach ($selectedWcag as $wcagId) {
+    $insertWcag->execute([
+        ':avvikelse_ID' => $avvikelseId,
+        ':wcag_ID' => (int)$wcagId
+    ]);
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -167,6 +197,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label for="deviationDescription">Avvikelsebeskrivning</label>
         <textarea id="deviationDescription" name="deviationDescription"><?= htmlspecialchars($deviationDescription) ?></textarea>
 
+        <label for="atgarda_text">Åtgärdsförslag:</label>
+        <textarea id="atgarda_text" name="atgarda_text"><?= htmlspecialchars($atgardaText) ?></textarea>
+
         <label for="priority">Prioritet</label>
         <select id="priority" name="priority">
             <option value="">Välj prioritet</option>
@@ -174,6 +207,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <option value="Bör" <?= $priority === 'Bör' ? 'selected' : '' ?>>Bör</option>
             <option value="Kan" <?= $priority === 'Kan' ? 'selected' : '' ?>>Kan</option>
         </select>
+
+        <fieldset>
+    <legend>WCAG-kriterier</legend>
+
+    <?php foreach ($wcagList as $wcag): ?>
+        <label>
+            <input
+                type="checkbox"
+                name="wcag[]"
+                value="<?= (int)$wcag['id'] ?>"
+                <?= in_array((string)$wcag['id'], $selectedWcag, true) ? 'checked' : '' ?>
+            >
+            <?= htmlspecialchars($wcag['code']) ?> – 
+            <?= htmlspecialchars($wcag['title']) ?> 
+            (<?= htmlspecialchars($wcag['level']) ?>)
+        </label>
+    <?php endforeach; ?>
+</fieldset>
 
         <fieldset>
             <legend>Koppla till sida/sidor</legend>
