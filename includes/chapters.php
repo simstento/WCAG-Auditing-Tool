@@ -8,9 +8,11 @@ $chapters = [
     ],
 
     'Innehåll' => [
+        'Placeholdertext' =>[
         'Sidtitel',
         'Sidans språk',
         'Automatisk omladdning',
+        ],
         'Semantik' => [
             'Semantik',
             'Landmärken',
@@ -109,10 +111,12 @@ $chapters = [
     ],
 
     'Ljud och video' => [
-        	'Textalternativ för tidsberoende medier',
+        'Placeholdertext' => [
+            'Textalternativ för tidsberoende medier',
             'Alternativ för ljudklipp',
             'Alternativ för animeringar och filmer',
             'Reglage',
+            ],
             'Undertexter' => [
                 'Undertexter',
             ],
