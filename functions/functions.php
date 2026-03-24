@@ -24,7 +24,7 @@ function renderSelect(string $name, array $options, string $selectedValue = '', 
     $onChange = $autoSubmit ? 'onchange="this.form.submit()"' : '';
 
     echo '<select name="' . htmlspecialchars($name) . '" ' . $onChange . '>';
-    echo '<option value="">Välj</option>';
+    echo '<option value="">Välj kapitel</option>';
 
     foreach ($options as $option) {
         $selected = ($selectedValue === $option) ? 'selected' : '';

@@ -45,7 +45,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $priority = trim($_POST['priority'] ?? '');
     $selectedSidor = $_POST['sidor'] ?? [];
     $selectedWcag = $_POST['wcag'] ?? [];
+}
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
     if ($title === '') {
         $errors[] = 'Titel måste anges.';
     }
@@ -65,18 +67,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($selectedSidor)) {
         $errors[] = 'Minst en sida måste väljas.';
     }
+
     if ($atgardaText === '') {
-    $errors[] = 'Åtgärda måste anges.';
-}
-if (empty($selectedWcag)) {
-    $errors[] = 'Minst ett WCAG-kriterium måste väljas.';
-}
+        $errors[] = 'Åtgärda måste anges.';
+    }
+
+    if (empty($selectedWcag)) {
+        $errors[] = 'Minst ett WCAG-kriterium måste väljas.';
+    }
 
     if (empty($errors)) {
         try {
             $pdo->beginTransaction();
 
-            // 1. Spara avvikelsen
             $insertAvvikelse = $pdo->prepare("
                 INSERT INTO Avvikelse (
                     chapter_1,
@@ -115,7 +118,6 @@ if (empty($selectedWcag)) {
 
             $avvikelseId = (int)$pdo->lastInsertId();
 
-            // 2. Koppla avvikelsen till valda sidor
             $insertKoppling = $pdo->prepare("
                 INSERT INTO sida_has_Avvikelse (sida_ID, Avvikelse_idAvvikelse)
                 VALUES (:sida_ID, :avvikelse_ID)
@@ -128,11 +130,22 @@ if (empty($selectedWcag)) {
                 ]);
             }
 
+            $insertWcag = $pdo->prepare("
+                INSERT INTO Avvikelse_has_WCAG (Avvikelse_idAvvikelse, WCAG_id)
+                VALUES (:avvikelse_ID, :wcag_ID)
+            ");
+
+            foreach ($selectedWcag as $wcagId) {
+                $insertWcag->execute([
+                    ':avvikelse_ID' => $avvikelseId,
+                    ':wcag_ID' => (int)$wcagId
+                ]);
+            }
+
             $pdo->commit();
 
             $success = 'Avvikelsen sparades korrekt.';
 
-            // töm formuläret efter lyckad sparning
             $title = '';
             $kapitel1 = '';
             $kapitel2 = '';
@@ -142,6 +155,7 @@ if (empty($selectedWcag)) {
             $priority = '';
             $atgardaText = '';
             $selectedSidor = [];
+            $selectedWcag = [];
 
         } catch (Throwable $e) {
             $pdo->rollBack();
@@ -149,10 +163,6 @@ if (empty($selectedWcag)) {
         }
     }
 }
-$insertWcag = $pdo->prepare("
-    INSERT INTO Avvikelse_has_WCAG (Avvikelse_idAvvikelse, WCAG_id)
-    VALUES (:avvikelse_ID, :wcag_ID)
-");
 
 foreach ($selectedWcag as $wcagId) {
     $insertWcag->execute([
@@ -187,6 +197,12 @@ foreach ($selectedWcag as $wcagId) {
     <form method="post">
         <label for="title">Titel</label>
         <input type="text" id="title" name="title" value="<?= htmlspecialchars($title) ?>">
+
+    <?php
+    renderSelect('kapitel_1', getChapterOptions($chapters), $kapitel1, true);
+    renderSelect('kapitel_2', getChapterOptions($chapters, $kapitel1), $kapitel2,true);
+    renderSelect('kapitel_3', getChapterOptions($chapters, $kapitel1, $kapitel2), $kapitel3);
+    ?>
 
     <select name="kapitel_1">
         <option value="">Välj kapitel 1</option>
@@ -258,7 +274,7 @@ foreach ($selectedWcag as $wcagId) {
             <?php endif; ?>
         </fieldset>
 
-        <button type="submit">Spara avvikelse</button>
+        <button type="submit" name="save_avvikelse" value="1">Spara avvikelse</button>
         <p>
         <a href="generate-report.php">Till avvikelselistan</a>
     </p>
