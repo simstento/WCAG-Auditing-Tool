@@ -75,6 +75,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
     if (empty($selectedWcag)) {
         $errors[] = 'Minst ett WCAG-kriterium måste väljas.';
     }
+    
+    if ($kapitel1 !== '' && !chapterHasLevel3($chapters, $kapitel1)) {
+    $kapitel3 = '';
+}
 
     if (empty($errors)) {
         try {
@@ -199,11 +203,13 @@ foreach ($selectedWcag as $wcagId) {
         <input type="text" id="title" name="title" value="<?= htmlspecialchars($title) ?>">
 
     <?php
-    renderSelect('kapitel_1', getChapterOptions($chapters), $kapitel1, true);
-    renderSelect('kapitel_2', getChapterOptions($chapters, $kapitel1), $kapitel2,true);
-    renderSelect('kapitel_3', getChapterOptions($chapters, $kapitel1, $kapitel2), $kapitel3);
-    ?>
+    renderSelect('kapitel_1', getChapterOptions($chapters), $kapitel1);
+    renderSelect('kapitel_2', getChapterOptions($chapters, $kapitel1), $kapitel2);
 
+    if ($kapitel1 !== '' && chapterHasLevel3($chapters, $kapitel1)) {
+    renderSelect('kapitel_3', getChapterOptions($chapters, $kapitel1, $kapitel2), $kapitel3);
+    }   
+    ?>
         <label for="rawObservation">Raw observation</label>
         <textarea id="rawObservation" name="rawObservation"><?= htmlspecialchars($rawObservation) ?></textarea>
 
@@ -264,5 +270,14 @@ foreach ($selectedWcag as $wcagId) {
         <a href="generate-report.php">Till avvikelselistan</a>
     </p>
     </form>
+    <script id="chapters-config" type="application/json">
+    <?= json_encode([
+    'chapters' => $chapters,
+    'selectedKapitel1' => $kapitel1,
+    'selectedKapitel2' => $kapitel2,
+    'selectedKapitel3' => $kapitel3,
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
+</script>
+<script src="../assets/js/chapters.js"></script>
 </body>
 </html>
