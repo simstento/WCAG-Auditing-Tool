@@ -204,21 +204,6 @@ foreach ($selectedWcag as $wcagId) {
     renderSelect('kapitel_3', getChapterOptions($chapters, $kapitel1, $kapitel2), $kapitel3);
     ?>
 
-    <select name="kapitel_1">
-        <option value="">Välj kapitel 1</option>
-        <?php foreach ($chapters as $chapter1 => $chapter2): ?>
-            <option value="<?= htmlspecialchars($chapter1) ?>">
-                <?= htmlspecialchars($chapter1) ?>
-            </option>
-        <?php endforeach; ?>
-    </select>
-
-        <label for="kapitel_2">Kapitel 2</label>
-        <input type="text" id="kapitel_2" name="kapitel_2" value="<?= htmlspecialchars($kapitel2) ?>">
-
-        <label for="kapitel_3">Kapitel 3</label>
-        <input type="text" id="kapitel_3" name="kapitel_3" value="<?= htmlspecialchars($kapitel3) ?>">
-
         <label for="rawObservation">Raw observation</label>
         <textarea id="rawObservation" name="rawObservation"><?= htmlspecialchars($rawObservation) ?></textarea>
 
