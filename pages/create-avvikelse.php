@@ -6,7 +6,11 @@ require __DIR__ . '/../src/db.php';
 $stmtWcag = $pdo->query("SELECT id, code, title, level FROM WCAG ORDER BY code");
 $wcagList = $stmtWcag->fetchAll();
 
-$rapportId = 1; // tillfälligt hårdkodat för test
+$rapportId = isset($_GET['rapport_id']) ? (int)$_GET['rapport_id'] : 0;
+
+if ($rapportId <= 0) {
+    die('Ingen rapport vald.');
+}
 
 // Hämta sidor som tillhör rapporten
 $stmt = $pdo->prepare("SELECT ID, name FROM sida WHERE rapport_ID = :rapport_ID ORDER BY name");
@@ -247,6 +251,9 @@ foreach ($selectedWcag as $wcagId) {
         </fieldset>
 
         <button type="submit">Spara avvikelse</button>
+        <p>
+        <a href="generate-report.php">Till avvikelselistan</a>
+    </p>
     </form>
 </body>
 </html>
