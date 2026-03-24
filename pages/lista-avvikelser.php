@@ -196,10 +196,7 @@ $avvikelser = $stmt->fetchAll();
                     <p>
                         <a href="edit-avvikelse.php?id=<?= (int)$avvikelse['idAvvikelse'] ?>">Redigera</a>
                         |
-                        <a href="delete-avvikelse.php?id=<?= (int)$avvikelse['idAvvikelse'] ?>"
-                           onclick="return confirm('Är du säker på att du vill ta bort denna avvikelse?')">
-                            Ta bort
-                        </a>
+                        <a href="delete-avvikelse.php?id=<?= (int)$avvikelse['idAvvikelse'] ?>">Ta bort</a>
                     </p>
                 </article>
             <?php endforeach; ?>
