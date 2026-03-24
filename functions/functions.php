@@ -19,4 +19,19 @@ function getChapterOptions(array $chapters, ?string $kapitel1 = null, ?string $k
     return $chapters[$kapitel1][$kapitel2] ?? [];
 }
 
-?>
+function renderSelect(string $name, array $options, string $selectedValue = '', bool $autoSubmit = false)
+{
+    $onChange = $autoSubmit ? 'onchange="this.form.submit()"' : '';
+
+    echo '<select name="' . htmlspecialchars($name) . '" ' . $onChange . '>';
+    echo '<option value="">Välj</option>';
+
+    foreach ($options as $option) {
+        $selected = ($selectedValue === $option) ? 'selected' : '';
+        echo '<option value="' . htmlspecialchars($option) . '" ' . $selected . '>'
+            . htmlspecialchars($option)
+            . '</option>';
+    }
+
+    echo '</select>';
+}
