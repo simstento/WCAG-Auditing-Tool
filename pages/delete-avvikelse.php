@@ -46,12 +46,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':id' => $avvikelseId
         ]);
 
-        header('Location: list-avvikelser.php?rapport_id=' . $rapportId);
+        header('Location: lista-avvikelser.php?rapport_id=' . $rapportId);
         exit;
     }
 
     if ($confirm === 'no') {
-        header('Location: list-avvikelser.php?rapport_id=' . $rapportId);
+        header('Location: lista-avvikelser.php?rapport_id=' . $rapportId);
         exit;
     }
 }

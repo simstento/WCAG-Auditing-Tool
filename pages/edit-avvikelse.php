@@ -320,7 +320,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 
     <p>
-        <a href="lista-avvikelser.php">Tillbaka till avvikelselistan</a>
+        <a href="lista-avvikelser.php?rapport_id=<?= (int)$rapportId ?>">Tillbaka till avvikelselistan</a>
     </p>
 </body>
 </html>
