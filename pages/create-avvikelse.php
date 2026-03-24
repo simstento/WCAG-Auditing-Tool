@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 require __DIR__ . '/../src/db.php';
+require __DIR__ . '/../includes/chapters.php';
+require __DIR__ . '/../functions/functions.php';
 
 $stmtWcag = $pdo->query("SELECT id, code, title, level FROM WCAG ORDER BY code");
 $wcagList = $stmtWcag->fetchAll();
@@ -186,8 +188,14 @@ foreach ($selectedWcag as $wcagId) {
         <label for="title">Titel</label>
         <input type="text" id="title" name="title" value="<?= htmlspecialchars($title) ?>">
 
-        <label for="kapitel_1">Kapitel 1</label>
-        <input type="text" id="kapitel_1" name="kapitel_1" value="<?= htmlspecialchars($kapitel1) ?>">
+    <select name="kapitel_1">
+        <option value="">Välj kapitel 1</option>
+        <?php foreach ($chapters as $chapter1 => $chapter2): ?>
+            <option value="<?= htmlspecialchars($chapter1) ?>">
+                <?= htmlspecialchars($chapter1) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
 
         <label for="kapitel_2">Kapitel 2</label>
         <input type="text" id="kapitel_2" name="kapitel_2" value="<?= htmlspecialchars($kapitel2) ?>">

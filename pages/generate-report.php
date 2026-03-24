@@ -292,7 +292,7 @@ foreach ($findings as $finding) {
     <?php endif; ?>
     
     <div class="actions">
-        <a class="button" href="list-avvikelser.php?rapport_id=<?= (int)$rapport['ID'] ?>">Till avvikelselista</a>
+        <a class="button" href="lista-avvikelser.php?rapport_id=<?= (int)$rapport['ID'] ?>">Till avvikelselista</a>
         <button class="button" onclick="window.print()">Skriv ut / Spara som PDF</button>
     </div>
 </body>
