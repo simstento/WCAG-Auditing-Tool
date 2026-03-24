@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
     if (empty($selectedWcag)) {
         $errors[] = 'Minst ett WCAG-kriterium måste väljas.';
     }
-    
+
     if ($kapitel1 !== '' && !chapterHasLevel3($chapters, $kapitel1)) {
     $kapitel3 = '';
 }
@@ -205,10 +205,7 @@ foreach ($selectedWcag as $wcagId) {
     <?php
     renderSelect('kapitel_1', getChapterOptions($chapters), $kapitel1);
     renderSelect('kapitel_2', getChapterOptions($chapters, $kapitel1), $kapitel2);
-
-    if ($kapitel1 !== '' && chapterHasLevel3($chapters, $kapitel1)) {
     renderSelect('kapitel_3', getChapterOptions($chapters, $kapitel1, $kapitel2), $kapitel3);
-    }   
     ?>
         <label for="rawObservation">Raw observation</label>
         <textarea id="rawObservation" name="rawObservation"><?= htmlspecialchars($rawObservation) ?></textarea>

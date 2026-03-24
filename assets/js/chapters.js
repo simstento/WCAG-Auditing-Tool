@@ -1,12 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('chapters.js laddad');
+
     const configElement = document.getElementById('chapters-config');
 
     if (!configElement) {
+        console.error('chapters-config saknas');
         return;
     }
 
     const config = JSON.parse(configElement.textContent);
-
     const chapters = config.chapters || {};
     const selectedKapitel1 = config.selectedKapitel1 || '';
     const selectedKapitel2 = config.selectedKapitel2 || '';
@@ -17,20 +19,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const kapitel3Select = document.getElementById('kapitel_3');
 
     if (!kapitel1Select || !kapitel2Select || !kapitel3Select) {
+        console.error('Ett eller flera kapitel-fält saknas i DOM');
         return;
     }
 
-    function clearSelect(selectElement, placeholder = 'Välj') {
+    function clearSelect(selectElement) {
         selectElement.innerHTML = '';
 
         const defaultOption = document.createElement('option');
         defaultOption.value = '';
-        defaultOption.textContent = placeholder;
+        defaultOption.textContent = 'Välj';
         selectElement.appendChild(defaultOption);
     }
 
-    function populateSelect(selectElement, options, selectedValue = '', placeholder = 'Välj') {
-        clearSelect(selectElement, placeholder);
+    function populateSelect(selectElement, options, selectedValue = '') {
+        clearSelect(selectElement);
 
         options.forEach((optionValue) => {
             const option = document.createElement('option');
@@ -45,48 +48,64 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function getChapter2Options(kapitel1) {
-        if (!kapitel1 || !chapters[kapitel1]) {
-            return [];
-        }
-
-        return Object.keys(chapters[kapitel1]);
-    }
-
-    function getChapter3Options(kapitel1, kapitel2) {
-        if (!kapitel1 || !kapitel2) {
-            return [];
-        }
-
-        if (!chapters[kapitel1] || !chapters[kapitel1][kapitel2]) {
-            return [];
-        }
-
-        return chapters[kapitel1][kapitel2];
+    function isAssocObject(value) {
+        return value && typeof value === 'object' && !Array.isArray(value);
     }
 
     function updateKapitel2(selectedValue = '') {
         const kapitel1 = kapitel1Select.value;
-        const kapitel2Options = getChapter2Options(kapitel1);
 
-        populateSelect(kapitel2Select, kapitel2Options, selectedValue);
+        clearSelect(kapitel2Select);
+        clearSelect(kapitel3Select);
+
+        if (!kapitel1 || !chapters[kapitel1]) {
+            kapitel3Select.disabled = true;
+            return;
+        }
+
+        const level2 = chapters[kapitel1];
+
+        if (Array.isArray(level2)) {
+            populateSelect(kapitel2Select, level2, selectedValue);
+            kapitel3Select.disabled = true;
+            return;
+        }
+
+        if (isAssocObject(level2)) {
+            populateSelect(kapitel2Select, Object.keys(level2), selectedValue);
+            kapitel3Select.disabled = false;
+        }
     }
 
     function updateKapitel3(selectedValue = '') {
         const kapitel1 = kapitel1Select.value;
         const kapitel2 = kapitel2Select.value;
-        const kapitel3Options = getChapter3Options(kapitel1, kapitel2);
 
-        populateSelect(kapitel3Select, kapitel3Options, selectedValue);
-    }
-
-    function resetKapitel3() {
         clearSelect(kapitel3Select);
+
+        if (!kapitel1 || !kapitel2 || !chapters[kapitel1]) {
+            kapitel3Select.disabled = true;
+            return;
+        }
+
+        const level2 = chapters[kapitel1];
+
+        if (Array.isArray(level2)) {
+            kapitel3Select.disabled = true;
+            return;
+        }
+
+        if (level2[kapitel2] && Array.isArray(level2[kapitel2])) {
+            populateSelect(kapitel3Select, level2[kapitel2], selectedValue);
+            kapitel3Select.disabled = false;
+        } else {
+            kapitel3Select.disabled = true;
+        }
     }
 
     kapitel1Select.addEventListener('change', () => {
         updateKapitel2();
-        resetKapitel3();
+        updateKapitel3();
     });
 
     kapitel2Select.addEventListener('change', () => {
