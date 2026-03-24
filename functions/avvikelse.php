@@ -10,7 +10,8 @@ function createAvvikelse(PDO $pdo, array $data): intdiv{
             rawObservation,
             deviationDescription,
             rapport_ID,
-            priority
+            priority,
+            atgarda_text
         ) VALUES (
             :kapitel_1,
             :kapitel_2,
@@ -19,7 +20,8 @@ function createAvvikelse(PDO $pdo, array $data): intdiv{
             :rawObservation,
             :deviationDescription,
             :rapport_ID,
-            :priority
+            :priority,
+            :atgarda_text
         )
     ";
     $stmt = $pdo->prepare($sql);
@@ -31,9 +33,11 @@ function createAvvikelse(PDO $pdo, array $data): intdiv{
         ':rawObservation' => $data['rawObservation'],
         ':deviationDescription' => $data['deviationDescription'],
         ':rapport_ID' => $data['rapport_ID'],
-        ':priority' => $data['priority']
+        ':priority' => $data['priority'],
+        ':atgarda_text' => $data['atgarda_text']
     ]);
     return (int)$pdo->lastInsertId();
+    
 }
 
 function connectAvvikelseToSidor(PDO $pdo, int $avvikelseId, array $sidaIds): void
