@@ -192,67 +192,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
     <?php endif; ?>
 
     <form method="post">
-        <label for="title">Titel</label>
-        <input type="text" id="title" name="title" value="<?= htmlspecialchars($title) ?>">
-
+        <div class="form-group">
+            <label for="title">Titel</label>
+            <input type="text" id="title" name="title" value="<?= htmlspecialchars($title) ?>">
+        </div>
     <?php
     renderSelect('kapitel_1', getChapterOptions($chapters), $kapitel1);
     renderSelect('kapitel_2', getChapterOptions($chapters, $kapitel1), $kapitel2);
     renderSelect('kapitel_3', getChapterOptions($chapters, $kapitel1, $kapitel2), $kapitel3);
     ?>
-        <label for="rawObservation">Raw observation</label>
-        <textarea id="rawObservation" name="rawObservation"><?= htmlspecialchars($rawObservation) ?></textarea>
-
-        <label for="deviationDescription">Avvikelsebeskrivning</label>
-        <textarea id="deviationDescription" name="deviationDescription"><?= htmlspecialchars($deviationDescription) ?></textarea>
-
-        <label for="atgarda_text">Åtgärdsförslag:</label>
-        <textarea id="atgarda_text" name="atgarda_text"><?= htmlspecialchars($atgardaText) ?></textarea>
-
-        <label for="priority">Prioritet</label>
-        <select id="priority" name="priority">
-            <option value="">Välj prioritet</option>
-            <option value="Måste" <?= $priority === 'Måste' ? 'selected' : '' ?>>Måste</option>
-            <option value="Bör" <?= $priority === 'Bör' ? 'selected' : '' ?>>Bör</option>
-            <option value="Kan" <?= $priority === 'Kan' ? 'selected' : '' ?>>Kan</option>
-        </select>
-
-        <fieldset>
+        <div class="form-group">    
+            <label for="rawObservation">Raw observation</label>
+            <textarea id="rawObservation" name="rawObservation"><?= htmlspecialchars($rawObservation) ?></textarea>
+        </div>
+        <div class="form-group">
+            <label for="deviationDescription">Avvikelsebeskrivning</label>
+            <textarea id="deviationDescription" name="deviationDescription"><?= htmlspecialchars($deviationDescription) ?></textarea>
+        </div>
+        <div class="form-group">
+            <label for="atgarda_text">Åtgärdsförslag:</label>
+            <textarea id="atgarda_text" name="atgarda_text"><?= htmlspecialchars($atgardaText) ?></textarea>
+        </div>
+        <div class="form-group">
+            <label for="priority">Prioritet</label>
+            <select id="priority" name="priority">
+                <option value="">Välj prioritet</option>
+                <option value="Måste" <?= $priority === 'Måste' ? 'selected' : '' ?>>Måste</option>
+                <option value="Bör" <?= $priority === 'Bör' ? 'selected' : '' ?>>Bör</option>
+                <option value="Kan" <?= $priority === 'Kan' ? 'selected' : '' ?>>Kan</option>
+            </select>
+        </div>
+    
+    <fieldset class="form-group">
     <legend>WCAG-kriterier</legend>
-
+    <div class="checkbox-grid">
     <?php foreach ($wcagList as $wcag): ?>
         <label>
-            <input
-                type="checkbox"
-                name="wcag[]"
-                value="<?= (int)$wcag['id'] ?>"
-                <?= in_array((string)$wcag['id'], $selectedWcag, true) ? 'checked' : '' ?>
-            >
+            <input type="checkbox" name="wcag[]" value="<?= (int)$wcag['id'] ?>" <?= in_array((string)$wcag['id'], $selectedWcag, true) ? 'checked' : '' ?>>
             <?= htmlspecialchars($wcag['code']) ?> – 
             <?= htmlspecialchars($wcag['title']) ?> 
             (<?= htmlspecialchars($wcag['level']) ?>)
         </label>
     <?php endforeach; ?>
+    </div>
 </fieldset>
 
-        <fieldset>
+        <fieldset class="form-group">
             <legend>Koppla till sida/sidor</legend>
-
-            <?php if (!$sidor): ?>
+            <div class="checkbox-grid">
+                <?php if (!$sidor): ?>
                 <p>Det finns inga sidor kopplade till rapporten ännu.</p>
-            <?php else: ?>
-                <?php foreach ($sidor as $sida): ?>
-                    <label>
-                        <input
-                            type="checkbox"
-                            name="sidor[]"
-                            value="<?= (int)$sida['ID'] ?>"
-                            <?= in_array((string)$sida['ID'], $selectedSidor, true) ? 'checked' : '' ?>
-                        >
-                        <?= htmlspecialchars($sida['name']) ?>
-                    </label>
-                <?php endforeach; ?>
-            <?php endif; ?>
+                <?php else: ?>
+                    <?php foreach ($sidor as $sida): ?>
+                        <label>
+                            <input
+                                type="checkbox"
+                                name="sidor[]"
+                                value="<?= (int)$sida['ID'] ?>"
+                                <?= in_array((string)$sida['ID'], $selectedSidor, true) ? 'checked' : '' ?>
+                            >
+                            <?= htmlspecialchars($sida['name']) ?>
+                        </label>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
         </fieldset>
 
         <button type="submit" name="save_avvikelse" value="1">Spara avvikelse</button>

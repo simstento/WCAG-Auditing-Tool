@@ -51,6 +51,7 @@ function renderSelect(string $name, array $options, string $selectedValue = ''):
         default => ucwords(str_replace('_', ' ', $name)),
     };
 
+    echo '<div class="form-group">';
     echo '<label for="' . htmlspecialchars($name) . '">' . htmlspecialchars($label) . '</label>';
     echo '<select id="' . htmlspecialchars($name) . '" name="' . htmlspecialchars($name) . '">';
     echo '<option value="">Välj</option>';
@@ -63,4 +64,5 @@ function renderSelect(string $name, array $options, string $selectedValue = ''):
     }
 
     echo '</select>';
+    echo '</div>';
 }
