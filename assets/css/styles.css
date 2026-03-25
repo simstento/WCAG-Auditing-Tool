@@ -1,0 +1,430 @@
+
+body {
+    margin: 0;
+    font-family: 'Inter', Arial, sans-serif;
+    background: #f5f5f5;
+    color: #111;
+}
+.site-header {
+    width: 100%;
+    background: #2c6800;
+    color: white;
+    padding: 16px 0;
+}
+
+.header-inner {
+    display: flex;
+    justify-content: center; /* ← ändra från space-between */
+    align-items: center;
+    gap: 40px; /* avstånd mellan logo och nav */
+}
+
+.logo {
+    margin: 0;
+    font-size: 20px;
+}
+
+/* Nav */
+.main-nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 16px;
+}
+
+.main-nav a:hover {
+    text-decoration: underline;
+}
+/* Page layout */
+.main-content {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+/* Form wrapper */
+.form-wrapper {
+    width: 100%;
+    max-width: 850px;
+}
+
+/* Card */
+.card {
+    background: #fff;
+    padding: 28px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+/* Form */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Fields */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    max-width: none;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Textarea */
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* Fieldsets */
+fieldset {
+    border: 1px solid #ddd;
+    padding: 16px;
+    border-radius: 6px;
+}
+
+legend {
+    font-weight: bold;
+}
+
+/* Checkbox grid (snygg men enkel) */
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+}
+
+/* Buttons */
+.form-actions {
+    margin-top: 10px;
+}
+
+.form-actions button {
+    width: 100%;
+}
+
+.button {
+    display: inline-block;
+    padding: 10px 18px;
+    background: #2c6800;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+a.button {
+    display: inline-block;
+    text-decoration: none;
+    padding: 7px 18px;
+    background: #2c6800;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* Back link */
+.back-link {
+    display: block;
+    margin-top: 10px;
+}
+
+/*view-rapport.php layout-css*/
+.report-overview {
+    width: 100%;
+}
+
+.report-overview-layout {
+    display: grid;
+    grid-template-columns: 1.3fr 420px;
+    gap: 32px;
+    align-items: start;
+}
+
+.report-main-card,
+.report-side-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 24px;
+}
+
+.report-main-card h1 {
+    margin-top: 0;
+    margin-bottom: 24px;
+    font-size: 2.2rem;
+    line-height: 1.1;
+}
+
+.rapport-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.rapport-meta p,
+.report-stat p,
+.back-link {
+    margin: 0;
+}
+
+.report-side-card {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.report-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.report-actions .button {
+    width: 100%;
+    text-align: center;
+}
+
+.back-link a {
+    color: #2c6800;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.back-link a:hover,
+.back-link a:focus {
+    text-decoration: underline;
+}
+
+@media (max-width: 1000px) {
+    .report-overview-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/*Lista-avvikelser.php layout-css*/
+
+.report-detail-page {
+    width: 100%;
+}
+
+.report-detail-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 32px;
+    align-items: start;
+}
+
+.report-sidebar-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 24px;
+}
+
+.report-sidebar-card h1 {
+    margin-top: 0;
+    margin-bottom: 24px;
+    font-size: 2rem;
+    line-height: 1.1;
+}
+
+.rapport-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: #333;
+}
+
+.rapport-meta p {
+    margin: 0;
+}
+
+.report-sidebar-actions {
+    margin-top: 24px;
+}
+
+.report-content {
+    width: 100%;
+}
+
+.avvikelse-lista {
+    display: grid;
+    gap: 16px;
+}
+
+.avvikelse-kort {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 24px;
+}
+
+.avvikelse-kort h2 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 1.6rem;
+}
+
+.meta {
+    margin: 0 0 8px 0;
+    color: #444;
+}
+
+.section-label {
+    font-weight: 600;
+    margin-top: 20px;
+    margin-bottom: 8px;
+}
+
+.card-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.card-actions a {
+    color: #2c6800;
+    font-weight: 600;
+}
+
+.card-actions a:hover,
+.card-actions a:focus {
+    text-decoration: underline;
+}
+
+.empty-state {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+@media (max-width: 1000px) {
+    .report-detail-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/*List-rapporter.php layout-css*/
+
+.reports-page {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Topbar */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.topbar h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    line-height: 1.1;
+}
+
+.table-card {
+    background: #fff;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    overflow-x: auto;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+}
+
+.report-table th,
+.report-table td {
+    padding: 14px 16px;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid #ececec;
+    white-space: nowrap;
+}
+
+.report-table thead th {
+    background: #f8f8f8;
+    font-weight: 600;
+}
+
+.report-table tbody tr:hover {
+    background: #f6faf3;
+}
+
+.report-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* .actions a {
+    color: #2c6800;
+    font-weight: 600;
+} */
+
+.actions a:hover {
+    text-decoration: underline;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-utkast {
+    background: #ededed;
+    color: #333;
+}
+
+.status-pågående {
+    background: #fff1c7;
+    color: #6b5300;
+}
+
+.status-klar {
+    background: #dff3e3;
+    color: #1f5c2c;
+}
+
+.empty-state {
+    background: #fff;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+@media (max-width: 700px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .page-header .button {
+        width: auto;
+    }
+}

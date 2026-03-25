@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 require __DIR__ . '/../src/db.php';
+$page_title = "Visa rapport";
+require __DIR__ . '/../includes/header.php';
 
 $rapportId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
@@ -42,74 +44,44 @@ $countStmt->execute([':rapport_ID' => $rapportId]);
 $totalAvvikelser = (int)$countStmt->fetchColumn();
 
 ?>
-<!DOCTYPE html>
-<html lang="sv">
-<head>
-    <meta charset="UTF-8">
-    <title><?= htmlspecialchars($rapport['title']) ?></title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 900px;
-            margin: 40px auto;
-        }
 
-        .box {
-            border: 1px solid #ccc;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
+<div class="report-overview">
+    <div class="report-overview-layout">
+        <section class="report-main-card">
+            <h1><?= htmlspecialchars($rapport['title']) ?></h1>
 
-        .actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
+            <div class="rapport-meta">
+                <p><strong>Kund:</strong> <?= htmlspecialchars($rapport['client']) ?></p>
+                <p><strong>Webbplats:</strong> <?= htmlspecialchars($rapport['siteName']) ?></p>
+                <p><strong>Granskningsdatum:</strong> <?= htmlspecialchars($rapport['reviewDate']) ?></p>
+                <p><strong>Status:</strong> <?= htmlspecialchars($rapport['status']) ?></p>
+            </div>
+        </section>
 
-        .button {
-            padding: 10px 16px;
-            background: #2c6800;
-            color: white;
-            text-decoration: none;
-        }
+        <aside class="report-side-card">
+            <div class="report-stat">
+                <p><strong>Antal avvikelser:</strong> <?= $totalAvvikelser ?></p>
+            </div>
 
-        .button.secondary {
-            background: #444;
-        }
-    </style>
-</head>
-<body>
+            <div class="report-actions">
+                <a class="button" href="create-avvikelse.php?rapport_id=<?= $rapportId ?>">
+                    + Skapa avvikelse
+                </a>
 
-<h1><?= htmlspecialchars($rapport['title']) ?></h1>
+                <a class="button secondary" href="lista-avvikelser.php?rapport_id=<?= $rapportId ?>">
+                    Visa avvikelser
+                </a>
 
-<div class="box">
-    <p><strong>Kund:</strong> <?= htmlspecialchars($rapport['client']) ?></p>
-    <p><strong>Webbplats:</strong> <?= htmlspecialchars($rapport['siteName']) ?></p>
-    <p><strong>Granskningsdatum:</strong> <?= htmlspecialchars($rapport['reviewDate']) ?></p>
-    <p><strong>Status:</strong> <?= htmlspecialchars($rapport['status']) ?></p>
+                <a class="button secondary" href="generate-report.php?rapport_id=<?= $rapportId ?>">
+                    Generera rapport
+                </a>
+            </div>
+
+            <p class="back-link">
+                <a href="list-rapporter.php">← Tillbaka till rapporter</a>
+            </p>
+        </aside>
+    </div>
 </div>
 
-<div class="box">
-    <p><strong>Antal avvikelser:</strong> <?= $totalAvvikelser ?></p>
-</div>
-
-<div class="actions">
-    <a class="button" href="create-avvikelse.php?rapport_id=<?= $rapportId ?>">
-        + Skapa avvikelse
-    </a>
-
-    <a class="button secondary" href="lista-avvikelser.php?rapport_id=<?= $rapportId ?>">
-        Visa avvikelser
-    </a>
-
-    <a class="button secondary" href="generate-report.php?rapport_id=<?= $rapportId ?>">
-        Generera rapport
-    </a>
-</div>
-
-<p>
-    <a href="list-rapporter.php">← Tillbaka till rapporter</a>
-</p>
-
-</body>
-</html>
+<?php require __DIR__ . '/../includes/footer.php'; ?>

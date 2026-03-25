@@ -2,7 +2,8 @@
 declare(strict_types=1);
 
 require __DIR__ . '/../src/db.php';
-
+$page_title = "Skapa rapport";
+require __DIR__ . '/../includes/header.php';
 $errors = [];
 
 $title = '';
@@ -65,117 +66,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="sv">
-<head>
-    <meta charset="UTF-8">
-    <title>Skapa rapport</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
+<div class="form-wrapper">
+    <div class="card">
+        <h1>Skapa tillgänglighetsrapport</h1>
 
-        form {
-            display: grid;
-            gap: 16px;
-        }
+        <?php if (!empty($errors)): ?>
+            <div class="errors">
+                <ul>
+                    <?php foreach ($errors as $error): ?>
+                        <li><?= htmlspecialchars($error) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
 
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 6px;
-        }
+        <form method="post" action="">
+            <div>
+                <label for="title">Titel</label>
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    value="<?= htmlspecialchars($title) ?>"
+                    required
+                >
+            </div>
 
-        input,
-        select {
-            width: 100%;
-            max-width: 400px;
-            padding: 8px;
-            font-size: 16px;
-        }
+            <div>
+                <label for="client">Kund</label>
+                <input type="text" id="client" name="client" value="<?= htmlspecialchars($client) ?>" required>
+            </div>
 
-        .errors {
-            background: #ffeaea;
-            border: 1px solid #cc0000;
-            padding: 12px 16px;
-            margin-bottom: 20px;
-        }
+            <div>
+                <label for="siteName">Webbplatsnamn</label>
+                <input type="text" id="siteName" name="siteName" value="<?= htmlspecialchars($siteName) ?>" required>
+            </div>
 
-        .actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
+            <div>
+                <label for="reviewDate">Granskningsdatum</label>
+                <input type="date" id="reviewDate" name="reviewDate" value="<?= htmlspecialchars($reviewDate) ?>" required>
+            </div>
 
-        button {
-            padding: 10px 16px;
-            font-size: 16px;
-            cursor: pointer;
-        }
+            <div>
+                <label for="status">Status</label>
+                <select id="status" name="status">
+                    <option value="utkast" <?= $status === 'utkast' ? 'selected' : '' ?>>utkast</option>
+                    <option value="pågående" <?= $status === 'pågående' ? 'selected' : '' ?>>pågående</option>
+                    <option value="klar" <?= $status === 'klar' ? 'selected' : '' ?>>klar</option>
+                </select>
+            </div>
 
-        a {
-            text-decoration: none;
-        }
-    </style>
-</head>
-<body>
-
-    <h1>Skapa rapport</h1>
-
-    <?php if (!empty($errors)): ?>
-        <div class="errors">
-            <ul>
-                <?php foreach ($errors as $error): ?>
-                    <li><?= htmlspecialchars($error) ?></li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-    <?php endif; ?>
-
-    <form method="post" action="">
-        <div>
-            <label for="title">Titel</label>
-            <input
-                type="text"
-                id="title"
-                name="title"
-                value="<?= htmlspecialchars($title) ?>"
-                required
-            >
-        </div>
-
-        <div>
-            <label for="client">Kund</label>
-            <input type="text" id="client" name="client" value="<?= htmlspecialchars($client) ?>" required>
-        </div>
-
-        <div>
-            <label for="siteName">Webbplatsnamn</label>
-            <input type="text" id="siteName" name="siteName" value="<?= htmlspecialchars($siteName) ?>" required>
-        </div>
-
-        <div>
-            <label for="reviewDate">Granskningsdatum</label>
-            <input type="date" id="reviewDate" name="reviewDate" value="<?= htmlspecialchars($reviewDate) ?>" required>
-        </div>
-
-        <div>
-            <label for="status">Status</label>
-            <select id="status" name="status">
-                <option value="utkast" <?= $status === 'utkast' ? 'selected' : '' ?>>utkast</option>
-                <option value="pågående" <?= $status === 'pågående' ? 'selected' : '' ?>>pågående</option>
-                <option value="klar" <?= $status === 'klar' ? 'selected' : '' ?>>klar</option>
-            </select>
-        </div>
-
-        <div class="actions">
-            <button type="submit">Spara rapport</button>
-            <a href="list-rapporter.php">Avbryt</a>
-        </div>
-    </form>
-
-</body>
-</html>
+            <div class="actions">
+                <button class="button" type="submit">Spara rapport</button>
+                <a href="list-rapporter.php" class="button">Avbryt</a>
+            </div>
+        </form>
+    </div>
+</div>
+<?php require __DIR__ . '/../includes/footer.php'; ?>

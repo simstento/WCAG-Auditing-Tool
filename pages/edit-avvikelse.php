@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 require __DIR__ . '/../src/db.php';
+$page_title = "Redigera avvikelse";
+require __DIR__ . '/../includes/header.php';
 
 $avvikelseId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
@@ -322,5 +324,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <p>
         <a href="lista-avvikelser.php?rapport_id=<?= (int)$rapportId ?>">Tillbaka till avvikelselistan</a>
     </p>
-</body>
-</html>
+<?php require __DIR__ . '/../includes/footer.php'; ?>

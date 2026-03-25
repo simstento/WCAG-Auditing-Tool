@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 require __DIR__ . '/../src/db.php';
+/*$page_title = "Skapa rapport";*/
+require __DIR__ . '/../includes/header.php';
 
 $rapportId = isset($_GET['rapport_id']) ? (int)$_GET['rapport_id'] : 1;
 
@@ -111,118 +113,6 @@ foreach ($findings as $finding) {
     $groupedByPage[$sidaNamn]['chapters'][$chapter1][$chapter2][$chapter3][] = $finding;
 }
 ?>
-<!DOCTYPE html>
-<html lang="sv">
-<head>
-    <meta charset="UTF-8">
-    <title><?= htmlspecialchars($rapport['title']) ?></title>
-    <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            margin: 2rem auto;
-            max-width: 1100px;
-            line-height: 1.55;
-            color: #111;
-        }
-
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        h2 {
-            font-size: 1.6rem;
-            margin-top: 2.2rem;
-            margin-bottom: 0.75rem;
-            border-bottom: 2px solid #ccc;
-            padding-bottom: 0.2rem;
-        }
-
-        h3 {
-            font-size: 1.3rem;
-            margin-top: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        h4 {
-            font-size: 1.1rem;
-            margin-top: 1.2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        h5 {
-            font-size: 1rem;
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .rapport-meta {
-            margin-bottom: 2rem;
-            color: #444;
-        }
-
-        .actions {
-            margin-bottom: 1.5rem;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 0.6rem 1rem;
-            background: #2c6800;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 0.35rem;
-            margin-right: 0.5rem;
-            border: none;
-            cursor: pointer;
-        }
-
-        .button:hover {
-            background: #245500;
-        }
-
-        .page-section {
-            margin-bottom: 2rem;
-        }
-
-        .page-meta {
-            color: #444;
-            margin-bottom: 1rem;
-        }
-
-        .finding {
-            border: 1px solid #ddd;
-            border-radius: 0.4rem;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            background: #fafafa;
-        }
-
-        .finding-title {
-            font-size: 1.05rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        .label {
-            font-weight: bold;
-            margin-top: 0.75rem;
-            display: block;
-        }
-
-        .meta {
-            color: #444;
-            margin-bottom: 0.35rem;
-        }
-
-        .empty {
-            padding: 1rem;
-            border: 1px solid #ccc;
-            background: #fff8e1;
-        }
-    </style>
-</head>
-<body>
     <h1><?= htmlspecialchars($rapport['title']) ?></h1>
 
     <div class="rapport-meta">
@@ -295,5 +185,4 @@ foreach ($findings as $finding) {
         <a class="button" href="lista-avvikelser.php?rapport_id=<?= (int)$rapport['ID'] ?>">Till avvikelselista</a>
         <button class="button" onclick="window.print()">Skriv ut / Spara som PDF</button>
     </div>
-</body>
-</html>
+<?php require __DIR__ . '/../includes/footer.php'; ?>

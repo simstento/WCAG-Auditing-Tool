@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 require __DIR__ . '/../src/db.php';
+$page_title = "Ta bort avvikelse";
+require __DIR__ . '/../includes/header.php';
 
 $avvikelseId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
@@ -130,5 +132,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </form>
     </div>
-</body>
-</html>
+<?php require __DIR__ . '/../includes/footer.php'; ?>
