@@ -168,13 +168,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
     }
 }
 
-foreach ($selectedWcag as $wcagId) {
-    $insertWcag->execute([
-        ':avvikelse_ID' => $avvikelseId,
-        ':wcag_ID' => (int)$wcagId
-    ]);
-}
-
 ?>
 
 <!DOCTYPE html>
