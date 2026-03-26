@@ -43,6 +43,17 @@ $countStmt->execute([':rapport_ID' => $rapportId]);
 
 $totalAvvikelser = (int)$countStmt->fetchColumn();
 
+//hämta sidor
+$sidorStmt = $pdo->prepare("
+    SELECT ID, name, url
+    FROM sida
+    WHERE rapport_ID = :rapport_ID
+");
+$sidorStmt->execute([':rapport_ID' => $rapportId]);
+$sidor = $sidorStmt->fetchAll(PDO::FETCH_ASSOC);
+
+$totalSidor = count($sidor);
+
 ?>
 
 <div class="report-overview">
@@ -55,6 +66,7 @@ $totalAvvikelser = (int)$countStmt->fetchColumn();
                 <p><strong>Webbplats:</strong> <?= htmlspecialchars($rapport['siteName']) ?></p>
                 <p><strong>Granskningsdatum:</strong> <?= htmlspecialchars($rapport['reviewDate']) ?></p>
                 <p><strong>Status:</strong> <?= htmlspecialchars($rapport['status']) ?></p>
+                <p><strong>Antal sidor:</strong> <?= $totalSidor ?></p>
             </div>
         </section>
 
