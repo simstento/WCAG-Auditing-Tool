@@ -16,7 +16,7 @@ $chapters = [
         'Semantik' => [
             'Semantik',
             'Landmärken',
-            'Rubriker',
+            'Rubriker', // 1.3.1
             'Listor',
             'Tabeller',
         ],
@@ -27,7 +27,7 @@ $chapters = [
         ],
         'Text' => [
             'Språkändringar',
-            'Rubriker',
+            'Rubriker', // 2.4.6
             'Kontrast för text',
             'Sensoriska hänvisningar',
         ],
@@ -58,11 +58,11 @@ $chapters = [
         'Statusmeddelanden',
         'Tidsgränser',
         'Innehållets ordning',
-        'Konsekvent navigering',
-        'Konsekvent benämning',
-        'Flera sätt att hitta sidan',
-        'Avbryta klick',
-        'Användarinställningar',
+        'Konsekvent navigering', // 3.2.3
+        'Konsekvent benämning', // 3.2.4
+        'Flera sätt att hitta sidan', // 2.4.5
+        'Avbryta klick', // 2.5.2
+        'Användarinställningar', // 11.7
     ],
 
     'Avvikande sidor' => [
