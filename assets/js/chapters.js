@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    function clearSelect(selectElement) {
+function clearSelect(selectElement) {
         selectElement.innerHTML = '';
 
         const defaultOption = document.createElement('option');
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         selectElement.appendChild(defaultOption);
     }
 
-    function populateSelect(selectElement, options, selectedValue = '') {
+function populateSelect(selectElement, options, selectedValue = '') {
         clearSelect(selectElement);
 
         options.forEach((optionValue) => {
@@ -48,11 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function isAssocObject(value) {
+function isAssocObject(value) {
         return value && typeof value === 'object' && !Array.isArray(value);
     }
 
-    function updateKapitel2(selectedValue = '') {
+function updateKapitel2(selectedValue = '') {
         const kapitel1 = kapitel1Select.value;
 
         clearSelect(kapitel2Select);
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function updateKapitel3(selectedValue = '') {
+function updateKapitel3(selectedValue = '') {
         const kapitel1 = kapitel1Select.value;
         const kapitel2 = kapitel2Select.value;
 
@@ -118,4 +118,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateKapitel2(selectedKapitel2);
     updateKapitel3(selectedKapitel3);
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const rowsContainer = document.getElementById('page-rows');
+    const addRowButton = document.getElementById('add-page-row');
+
+    if (!rowsContainer || !addRowButton) {
+        return;
+    }
+
+    function addPageRow() {
+        const currentRows = rowsContainer.querySelectorAll('.page-row-card');
+        const index = currentRows.length;
+
+        const row = document.createElement('div');
+        row.className = 'page-row-card';
+
+        row.innerHTML = `
+            <h2>Rad ${index + 1}</h2>
+
+            <div class="form-group">
+                <label for="page_name_${index}">Sidnamn</label>
+                <input
+                    type="text"
+                    id="page_name_${index}"
+                    name="page_name[]"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="page_url_${index}">URL</label>
+                <input
+                    type="text"
+                    id="page_url_${index}"
+                    name="page_url[]"
+                    placeholder="www.exempelsida.se/sida"
+                >
+            </div>
+        `;
+
+        rowsContainer.appendChild(row);
+    }
+
+    addRowButton.addEventListener('click', addPageRow);
 });

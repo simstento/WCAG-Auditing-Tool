@@ -19,6 +19,8 @@ body {
     gap: 40px; /* avstånd mellan logo och nav */
 }
 
+
+
 .logo {
     margin: 0;
     font-size: 20px;
@@ -79,6 +81,11 @@ textarea {
     border-radius: 4px;
 }
 
+label{
+    display: inline-block;
+    margin: 1rem 0 0.5rem;
+}
+
 /* Textarea */
 textarea {
     min-height: 120px;
@@ -103,15 +110,11 @@ legend {
     gap: 8px;
 }
 
-/* Buttons */
-.form-actions {
-    margin-top: 10px;
-}
+/*********************************************************
+                            Buttons   
+**********************************************************/
 
-.form-actions button {
-    width: 100%;
-}
-
+/*Default knapp*/
 .button {
     display: inline-block;
     padding: 10px 18px;
@@ -135,6 +138,36 @@ a.button {
     text-align: center;
     font-weight: 600;
 }
+.button:hover {
+    background: #245500;
+}
+
+
+/*Secondary knapp*/
+.button-secondary {
+    background: #4b4b4b;
+    color: #fff;
+    margin-left: 6px;
+    text-decoration: none;
+    padding: 7px 16px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.button-secondary:hover,
+.button-secondary:focus {
+    background: #333;
+}
+/* .form-actions button {
+    width: 100%;
+} */
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
 
 /* Back link */
 .back-link {
@@ -194,7 +227,7 @@ a.button {
 }
 
 .report-actions .button {
-    width: 100%;
+    width: auto;
     text-align: center;
 }
 
@@ -416,6 +449,22 @@ a.button {
     border: 1px solid #d9d9d9;
     border-radius: 8px;
     padding: 20px;
+}
+
+/* Create-sida.php layout-css */
+
+.page-row-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    background: #fafafa;
+    margin-bottom:34px;
+}
+
+.page-row-card h2 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 1.1rem;
 }
 
 @media (max-width: 700px) {

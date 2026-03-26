@@ -75,6 +75,10 @@ $totalAvvikelser = (int)$countStmt->fetchColumn();
                 <a class="button secondary" href="generate-report.php?rapport_id=<?= $rapportId ?>">
                     Generera rapport
                 </a>
+
+                <a class="button secondary" href="create-sida.php?rapport_id=<?= $rapportId ?>">
+                    Lägg till sida
+                </a>
             </div>
 
             <p class="back-link">
