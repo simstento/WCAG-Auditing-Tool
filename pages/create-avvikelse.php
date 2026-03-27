@@ -52,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $selectedSidor = $_POST['sidor'] ?? [];
     $selectedWcag = $_POST['wcag'] ?? [];
     $globalSection = trim($_POST['global_section'] ?? '');
+    $isGlobal = $_POST['is_global'] ?? '0';
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {

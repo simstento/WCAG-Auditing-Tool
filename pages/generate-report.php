@@ -79,6 +79,25 @@ $globalStmt->execute([
 
 $globalFindings = $globalStmt->fetchAll(PDO::FETCH_ASSOC);
 
+$groupedGlobalFindings = [
+    'Ramverk' => [],
+    'Navigering' => []
+];
+
+foreach ($globalFindings as $finding) {
+    $section = $finding['global_section'] ?? '';
+
+    if (!isset($groupedGlobalFindings[$section])) {
+        $groupedGlobalFindings[$section] = [];
+    }
+
+    $chapter1 = $finding['chapter_1'] ?: 'Okategoriserat';
+    $chapter2 = $finding['chapter_2'] ?: 'Okategoriserat';
+    $chapter3 = $finding['chapter_3'] ?: 'Okategoriserat';
+
+    $groupedGlobalFindings[$section][$chapter1][$chapter2][$chapter3][] = $finding;
+}
+
 /**
  * Hämta data sida-för-sida.
  * Viktigt:
@@ -117,6 +136,7 @@ $sql = "
     LEFT JOIN WCAG w
         ON ahw.WCAG_id = w.id
     WHERE s.rapport_ID = :rapport_ID
+    AND a.is_global = 0
     GROUP BY
         s.ID,
         s.name,
@@ -164,6 +184,79 @@ foreach ($findings as $finding) {
 
     $groupedByPage[$sidaNamn]['chapters'][$chapter1][$chapter2][$chapter3][] = $finding;
 }
+function renderFinding(array $finding): void
+{
+    ?>
+    <article class="finding">
+        <div class="finding-title">
+            <?= htmlspecialchars($finding['title']) ?>
+        </div>
+
+        <p class="meta">
+            <strong>Prioritet:</strong>
+            <?= htmlspecialchars($finding['priority']) ?>
+        </p>
+
+        <span class="label">Observation</span>
+        <p><?= nl2br(htmlspecialchars($finding['rawObservation'])) ?></p>
+
+        <span class="label">Avvikelsebeskrivning</span>
+        <p><?= nl2br(htmlspecialchars($finding['deviationDescription'])) ?></p>
+
+        <span class="label">Åtgärda</span>
+        <p><?= nl2br(htmlspecialchars($finding['atgarda_text'] ?? '')) ?></p>
+
+        <span class="label">WCAG</span>
+        <p><?= htmlspecialchars($finding['wcag_list'] ?? 'Ej angivet') ?></p>
+    </article>
+    <?php
+}
+/**
+ * Render nested grouped findings with proper heading hierarchy
+ * 
+ * @param array $data Nested array structure of findings
+ * @param int $depthLevel Current heading depth (3-5 for h3-h5)
+ * @param string $hideLabel Optional level name to skip rendering heading (e.g., 'Okategoriserat')
+ */
+function renderGroupedFindings($data, $depthLevel = 3, $hideLabel = null): void {
+    foreach ($data as $label => $items) {
+        if (empty($items)) {
+            continue;
+        }
+
+        // Check if this is the final level (array of findings with idAvvikelse)
+        $isFindingLevel = isset($items[0]) && is_array($items[0]) && isset($items[0]['idAvvikelse']);
+
+        if ($isFindingLevel) {
+            // Render finding items
+            foreach ($items as $finding) {
+                renderFinding($finding);
+            }
+        } else {
+            // Render heading (unless it should be hidden)
+            if ($hideLabel !== $label) {
+                $headingTag = "h{$depthLevel}";
+                $classAttr = ($depthLevel === 6) ? " class=\"chapter-3-heading\"" : "";
+                echo "<{$headingTag}{$classAttr}>" . htmlspecialchars($label) . "</{$headingTag}>";
+            }
+
+            // Recurse into next level
+            renderGroupedFindings($items, $depthLevel + 1, $hideLabel);
+        }
+    }
+}
+
+$hasGlobalFindings = false;
+    foreach ($groupedGlobalFindings as $sectionGroups) {
+        if (!empty($sectionGroups)) {
+            $hasGlobalFindings = true;
+            break;
+        }
+    }
+
+$hasPageFindings = !empty($groupedByPage);
+$hasAnyFindings = $hasGlobalFindings || $hasPageFindings;
+
 ?>
 <div class="generate-report-page">
     <div class="generate-report-header">
@@ -176,61 +269,32 @@ foreach ($findings as $finding) {
         </div>
     </div>
 
-        <?php if (empty($groupedByPage)): ?>
+        <?php if (!$hasAnyFindings): ?>
             <div class="empty">
                 <p>Det finns inga avvikelser registrerade för denna rapport.</p>
             </div>
         <?php else: ?>
+       
+        <?php if ($hasGlobalFindings): ?>
+            <section class="page-section">
+                <h2>Avvikelser som förekommer på alla de testade sidorna</h2>
+                <?php renderGroupedFindings($groupedGlobalFindings, 3, 'Okategoriserat'); ?>
+            </section>
+        <?php endif; ?>
 
-            <?php foreach ($groupedByPage as $sidaNamn => $pageData): ?>
-                <section class="page-section">
-                    <h2><?= htmlspecialchars($sidaNamn) ?></h2>
+        <?php foreach ($groupedByPage as $sidaNamn => $pageData): ?>
+            <section class="page-section">
+                <h2><?= htmlspecialchars($sidaNamn) ?></h2>
 
-                    <?php if (!empty($pageData['meta']['sida_url'])): ?>
-                        <p class="page-meta">
-                            <strong>URL:</strong>
-                            <?= htmlspecialchars($pageData['meta']['sida_url']) ?>
-                        </p>
-                    <?php endif; ?>
+                <?php if (!empty($pageData['meta']['sida_url'])): ?>
+                    <p class="page-meta">
+                        <strong>URL:</strong>
+                        <?= htmlspecialchars($pageData['meta']['sida_url']) ?>
+                    </p>
+                <?php endif; ?>
 
-                    <?php foreach ($pageData['chapters'] as $chapter1 => $chapter2Groups): ?>
-                        <h3><?= htmlspecialchars($chapter1) ?></h3>
-
-                        <?php foreach ($chapter2Groups as $chapter2 => $chapter3Groups): ?>
-                            <h4><?= htmlspecialchars($chapter2) ?></h4>
-
-                            <?php foreach ($chapter3Groups as $chapter3 => $chapterFindings): ?>
-                                <h5><?= htmlspecialchars($chapter3) ?></h5>
-
-                                <?php foreach ($chapterFindings as $finding): ?>
-                                    <article class="finding">
-                                        <div class="finding-title">
-                                            <?= htmlspecialchars($finding['title']) ?>
-                                        </div>
-
-                                        <p class="meta">
-                                            <strong>Prioritet:</strong>
-                                            <?= htmlspecialchars($finding['priority']) ?>
-                                        </p>
-
-                                        <span class="label">Observation</span>
-                                        <p><?= nl2br(htmlspecialchars($finding['rawObservation'])) ?></p>
-
-                                        <span class="label">Avvikelsebeskrivning</span>
-                                        <p><?= nl2br(htmlspecialchars($finding['deviationDescription'])) ?></p>
-
-                                        <span class="label">Åtgärda</span>
-                                        <p><?= nl2br(htmlspecialchars($finding['atgarda_text'] ?? '')) ?></p>
-
-                                        <span class="label">WCAG</span>
-                                        <p><?= htmlspecialchars($finding['wcag_list'] ?? 'Ej angivet') ?></p>
-                                    </article>
-                                <?php endforeach; ?>
-
-                            <?php endforeach; ?>
-                        <?php endforeach; ?>
-                    <?php endforeach; ?>
-                </section>
+                <?php renderGroupedFindings($pageData['chapters'], 3); ?>
+            </section>
             <?php endforeach; ?>
 
         <?php endif; ?>
