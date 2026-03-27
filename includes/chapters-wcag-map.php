@@ -1,6 +1,9 @@
 <?php
 
 $chapterWcagMap = [
+    'Innehåll|Placeholdertext|Sidtitel' => ['2.4.2'],
+    'Innehåll|Placeholdertext|Sidans språk' => ['3.1.2'],
+    'Innehåll|Placeholdertext|Automatisk omladdning' => ['2.2.1'],
     'Innehåll|Semantik|Landmärken' => ['2.4.1', '1.3.1'],
     'Innehåll|Semantik|Rubriker' => ['1.3.1'],
     'Innehåll|Semantik|Listor' => ['1.3.1'],
@@ -37,9 +40,9 @@ $chapterWcagMap = [
     'Avvikande sidor|Aktivering av tillgänglighetsfunktioner' => ['5.2'],
     'Avvikande sidor|Biometri' => ['5.3'],
     'Avvikande sidor|Bevara tillgänglighet vid omvandling' => ['5.4'],
-    'Bilder|Kontrast i grafik' => ['1.4.1'],
-    'Bilder|Bilder av text' => ['1.4.5'],
-    'Bilder|Kontrast för bilder av text' => ['1.4.3'],
+    'Bilder|Placeholdertext|Kontrast i grafik' => ['1.4.1'],
+    'Bilder|Placeholdertext|Bilder av text' => ['1.4.5'],
+    'Bilder|Placeholdertext|Kontrast för bilder av text' => ['1.4.3'],
     'Bilder|Textalternativ' => ['1.1.1'],
     'Bilder|Textalternativ|Textalternativ för bilder' => ['1.1.1'],
     'Bilder|Textalternativ|Kontrast för textalternativ' => ['1.4.3'],
