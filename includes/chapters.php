@@ -2,9 +2,11 @@
 
 $chapters = [
     'Störande' => [
-        'Ljudkontroll',
-        'Rörligt innehåll',
-        'Flimmer',
+        'Placeholdertext' => [
+            'Ljudkontroll', // 1.4.2
+            'Rörligt innehåll', // 2.2.2
+            'Flimmer', // 2.3.1
+        ],
     ],
 
     'Innehåll' => [

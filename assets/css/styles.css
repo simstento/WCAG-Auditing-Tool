@@ -110,6 +110,26 @@ legend {
     gap: 8px;
 }
 
+/* För att få checkbox och label på samma rad */
+.checkbox-item {
+    display: flex;
+    align-items: center;   /* 🔥 viktig */
+    gap: 10px;
+    cursor: pointer;
+}
+
+.checkbox-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;              /* 🔥 tar bort konstig offset */
+    flex-shrink: 0;         /* 🔥 så den inte krymper */
+}
+
+.checkbox-item span {
+    display: inline-block;
+    line-height: 1.4;
+}
+
 /*********************************************************
                             Buttons   
 **********************************************************/
@@ -359,6 +379,10 @@ a.button {
     border-radius: 6px;
     padding: 8px 10px;
     transition: background-color 0.2s ease, border-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
 }
 
 .wcag-item.is-suggested {

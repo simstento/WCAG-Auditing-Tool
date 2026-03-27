@@ -1,6 +1,9 @@
 <?php
 
 $chapterWcagMap = [
+    'Störande|Placeholdertext|Ljudkontroll' => ['1.4.2'],
+    'Störande|Placeholdertext|Rörligt innehåll' => ['2.2.2'],
+    'Störande|Placeholdertext|Flimmer' => ['2.3.1'],
     'Innehåll|Placeholdertext|Sidtitel' => ['2.4.2'],
     'Innehåll|Placeholdertext|Sidans språk' => ['3.1.2'],
     'Innehåll|Placeholdertext|Automatisk omladdning' => ['2.2.1'],
