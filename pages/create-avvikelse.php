@@ -258,7 +258,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
                     <?php else: ?>
                         <div class="checkbox-grid">
                             <?php foreach ($sidor as $sida): ?>
-                                <label>
+                                <label class="checkbox-item">
                                     <input type="checkbox" name="sidor[]" value="<?= (int)$sida['ID'] ?>">
                                     <?= htmlspecialchars($sida['name']) ?>
                                 </label>

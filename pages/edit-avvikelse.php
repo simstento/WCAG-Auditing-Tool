@@ -235,16 +235,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="sv">
-<head>
-    <meta charset="UTF-8">
-    <title>Redigera avvikelse</title>
-</head>
-<body>
-    <h1>Redigera avvikelse</h1>
 
-    <?php if ($errors): ?>
+<div class="form-wrapper">
+<?php if ($errors): ?>
         <ul>
             <?php foreach ($errors as $error): ?>
                 <li><?= htmlspecialchars($error) ?></li>
@@ -252,76 +245,80 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </ul>
     <?php endif; ?>
 
-    <?php if ($success !== ''): ?>
-        <p><?= htmlspecialchars($success) ?></p>
+<?php if ($success !== ''): ?>
+            <p><?= htmlspecialchars($success) ?></p>
     <?php endif; ?>
 
-    <form method="post">
-        <label for="title">Titel</label>
-        <input type="text" id="title" name="title" value="<?= htmlspecialchars($title) ?>">
+<h1>Redigera avvikelse</h1>
+    <div class="card">
+        <form method="post">
+            <label for="title">Titel</label>
+            <input type="text" id="title" name="title" value="<?= htmlspecialchars($title) ?>">
 
-        <label for="kapitel_1">Kapitel 1</label>
-        <input type="text" id="kapitel_1" name="kapitel_1" value="<?= htmlspecialchars($kapitel1) ?>">
+            <label for="kapitel_1">Kapitel 1</label>
+            <input type="text" id="kapitel_1" name="kapitel_1" value="<?= htmlspecialchars($kapitel1) ?>">
 
-        <label for="kapitel_2">Kapitel 2</label>
-        <input type="text" id="kapitel_2" name="kapitel_2" value="<?= htmlspecialchars($kapitel2) ?>">
+            <label for="kapitel_2">Kapitel 2</label>
+            <input type="text" id="kapitel_2" name="kapitel_2" value="<?= htmlspecialchars($kapitel2) ?>">
 
-        <label for="kapitel_3">Kapitel 3</label>
-        <input type="text" id="kapitel_3" name="kapitel_3" value="<?= htmlspecialchars($kapitel3) ?>">
+            <label for="kapitel_3">Kapitel 3</label>
+            <input type="text" id="kapitel_3" name="kapitel_3" value="<?= htmlspecialchars($kapitel3) ?>">
 
-        <label for="rawObservation">Raw observation</label>
-        <textarea id="rawObservation" name="rawObservation"><?= htmlspecialchars($rawObservation) ?></textarea>
+            <label for="rawObservation">Raw observation</label>
+            <textarea id="rawObservation" name="rawObservation"><?= htmlspecialchars($rawObservation) ?></textarea>
 
-        <label for="deviationDescription">Avvikelsebeskrivning</label>
-        <textarea id="deviationDescription" name="deviationDescription"><?= htmlspecialchars($deviationDescription) ?></textarea>
+            <label for="deviationDescription">Avvikelsebeskrivning</label>
+            <textarea id="deviationDescription" name="deviationDescription"><?= htmlspecialchars($deviationDescription) ?></textarea>
 
-        <label for="atgarda_text">Åtgärda</label>
-        <textarea id="atgarda_text" name="atgarda_text"><?= htmlspecialchars($atgardaText) ?></textarea>
+            <label for="atgarda_text">Åtgärda</label>
+            <textarea id="atgarda_text" name="atgarda_text"><?= htmlspecialchars($atgardaText) ?></textarea>
 
-        <label for="priority">Prioritet</label>
-        <select id="priority" name="priority">
-            <option value="">Välj prioritet</option>
-            <option value="Måste" <?= $priority === 'Måste' ? 'selected' : '' ?>>Måste</option>
-            <option value="Bör" <?= $priority === 'Bör' ? 'selected' : '' ?>>Bör</option>
-            <option value="Kan" <?= $priority === 'Kan' ? 'selected' : '' ?>>Kan</option>
-        </select>
+            <label for="priority">Prioritet</label>
+            <select id="priority" name="priority">
+                <option value="">Välj prioritet</option>
+                <option value="Måste" <?= $priority === 'Måste' ? 'selected' : '' ?>>Måste</option>
+                <option value="Bör" <?= $priority === 'Bör' ? 'selected' : '' ?>>Bör</option>
+                <option value="Kan" <?= $priority === 'Kan' ? 'selected' : '' ?>>Kan</option>
+            </select>
 
-        <fieldset>
-            <legend>Koppla till sida/sidor</legend>
-            <?php foreach ($sidor as $sida): ?>
-                <label>
-                    <input
-                        type="checkbox"
-                        name="sidor[]"
-                        value="<?= (int)$sida['ID'] ?>"
-                        <?= in_array((string)$sida['ID'], $selectedSidor, true) ? 'checked' : '' ?>
-                    >
-                    <?= htmlspecialchars($sida['name']) ?>
-                </label>
-            <?php endforeach; ?>
-        </fieldset>
+            <fieldset>
+                <legend>Koppla till sida/sidor</legend>
+                <?php foreach ($sidor as $sida): ?>
+                    <label class="checkbox-item" for="sida_<?= (int)$sida['ID'] ?>">
+                        <input
+                            type="checkbox"
+                            id="sida_<?= (int)$sida['ID'] ?>"
+                            name="sidor[]"
+                            value="<?= (int)$sida['ID'] ?>"
+                            <?= in_array((string)$sida['ID'], $selectedSidor, true) ? 'checked' : '' ?>
+                        >
+                        <?= htmlspecialchars($sida['name']) ?>
+                    </label>
+                <?php endforeach; ?>
+            </fieldset>
 
-        <fieldset>
-            <legend>WCAG-kriterier</legend>
-            <?php foreach ($wcagList as $wcag): ?>
-                <label>
-                    <input
-                        type="checkbox"
-                        name="wcag[]"
-                        value="<?= (int)$wcag['id'] ?>"
-                        <?= in_array((string)$wcag['id'], $selectedWcag, true) ? 'checked' : '' ?>
-                    >
-                    <?= htmlspecialchars($wcag['code']) ?> –
-                    <?= htmlspecialchars($wcag['title']) ?>
-                    (<?= htmlspecialchars($wcag['level']) ?>)
-                </label>
-            <?php endforeach; ?>
-        </fieldset>
+            <fieldset>
+                <legend>WCAG-kriterier</legend>
+                <?php foreach ($wcagList as $wcag): ?>
+                    <label class="checkbox-item">
+                        <input
+                            type="checkbox"
+                            name="wcag[]"
+                            value="<?= (int)$wcag['id'] ?>"
+                            <?= in_array((string)$wcag['id'], $selectedWcag, true) ? 'checked' : '' ?>
+                        >
+                        <?= htmlspecialchars($wcag['code']) ?> –
+                        <?= htmlspecialchars($wcag['title']) ?>
+                        (<?= htmlspecialchars($wcag['level']) ?>)
+                    </label>
+                <?php endforeach; ?>
+            </fieldset>
 
-        <button type="submit">Spara ändringar</button>
-    </form>
-
-    <p>
-        <a href="lista-avvikelser.php?rapport_id=<?= (int)$rapportId ?>">Tillbaka till avvikelselistan</a>
-    </p>
+            <button class="button type="submit">Spara ändringar</button>
+        </form>
+        <p>
+            <a class="btn btn-secondary" href="lista-avvikelser.php?rapport_id=<?= (int)$rapportId ?>">Tillbaka till avvikelselistan</a>
+        </p>
+    </div>
+</div>
 <?php require __DIR__ . '/../includes/footer.php'; ?>
