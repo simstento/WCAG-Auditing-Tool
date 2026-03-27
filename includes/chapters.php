@@ -74,9 +74,11 @@ $chapters = [
     ],
 
     'Bilder' => [
-        'Kontrast i grafik',
-        'Bilder av text',
-        'Kontrast för bilder av text',
+        'Placeholdertext' => [
+            'Kontrast i grafik',
+            'Bilder av text',
+            'Kontrast för bilder av text',
+        ],
         'Textalternativ' => [
             'Textalternativ för bilder',
             'Kontrast för textalternativ',

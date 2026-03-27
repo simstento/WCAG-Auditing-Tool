@@ -6,6 +6,9 @@ require __DIR__ . '/../includes/header.php';
 require __DIR__ . '/../src/db.php';
 require __DIR__ . '/../includes/chapters.php';
 require __DIR__ . '/../functions/functions.php';
+require __DIR__ . '/../includes/chapters-wcag-map.php';
+
+
 
 $stmtWcag = $pdo->query("SELECT id, code, title, level FROM WCAG ORDER BY code");
 $wcagList = $stmtWcag->fetchAll();
@@ -25,7 +28,6 @@ $selectedWcag = [];
 
 $errors = [];
 $success = '';
-
 $title = '';
 $kapitel1 = '';
 $kapitel2 = '';
@@ -35,6 +37,7 @@ $deviationDescription = '';
 $priority = '';
 $atgardaText = '';
 $selectedSidor = [];
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = trim($_POST['title'] ?? '');
@@ -187,6 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
                 renderSelect('kapitel_1', getChapterOptions($chapters), $kapitel1);
                 renderSelect('kapitel_2', getChapterOptions($chapters, $kapitel1), $kapitel2);
                 renderSelect('kapitel_3', getChapterOptions($chapters, $kapitel1, $kapitel2), $kapitel3);
+                $chapterWcagMapIds = buildChapterWcagMapIds($chapterWcagMap, $wcagList);
                 ?>
 
                 <div class="form-group">
@@ -216,13 +220,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
 
                 <fieldset>
                     <legend>WCAG-kriterier</legend>
+                    <div class="wcag-toolbar">
+                        <button type="button" class="button secondary small" id="show-recommended-wcag">
+                            Visa bara rekommenderade
+                        </button>
+
+                        <button type="button" class="button secondary small" id="show-all-wcag">
+                            Visa alla WCAG
+                        </button>
+                    </div>
+                <p id="wcag-empty-message" class="helper-text" hidden>
+                    Det finns inga rekommenderade WCAG-kriterier för det valda kapitlet.
+                </p>
                     <div class="checkbox-grid">
                         <?php foreach ($wcagList as $wcag): ?>
-                            <label>
-                                <input type="checkbox" name="wcag[]" value="<?= (int)$wcag['id'] ?>">
-                                <?= htmlspecialchars($wcag['code']) ?> – <?= htmlspecialchars($wcag['title']) ?>
-                            </label>
-                        <?php endforeach; ?>
+                        <label class="checkbox-item wcag-item" data-wcag-id="<?= (int)$wcag['id'] ?>">
+                            <input
+                                type="checkbox"
+                                name="wcag[]"
+                                value="<?= (int)$wcag['id'] ?>"
+                                <?= in_array((string)$wcag['id'], $selectedWcag, true) ? 'checked' : '' ?>>
+                            <span>
+                                <?= htmlspecialchars($wcag['code']) ?> –
+                                <?= htmlspecialchars($wcag['title']) ?>
+                                (<?= htmlspecialchars($wcag['level']) ?>)
+                            </span>
+                        </label>
+                    <?php endforeach; ?>
                     </div>
                 </fieldset>
 
@@ -262,6 +286,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
     'selectedKapitel1' => $kapitel1,
     'selectedKapitel2' => $kapitel2,
     'selectedKapitel3' => $kapitel3,
+    'chapterWcagMap' => $chapterWcagMapIds
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
 </script>
 <script src="../assets/js/chapters.js"></script>

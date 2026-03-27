@@ -106,10 +106,17 @@ function updateKapitel3(selectedValue = '') {
     kapitel1Select.addEventListener('change', () => {
         updateKapitel2();
         updateKapitel3();
+
+        if (highlightSuggestWcagGlobally) {
+        highlightSuggestWcagGlobally();
+        }
     });
 
     kapitel2Select.addEventListener('change', () => {
         updateKapitel3();
+        if (highlightSuggestWcagGlobally) {
+        highlightSuggestWcagGlobally();
+        }
     });
 
     if (selectedKapitel1) {
@@ -118,6 +125,10 @@ function updateKapitel3(selectedValue = '') {
 
     updateKapitel2(selectedKapitel2);
     updateKapitel3(selectedKapitel3);
+
+    if (highlightSuggestWcagGlobally) {
+        highlightSuggestWcagGlobally();
+    }
 });
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -163,3 +174,123 @@ document.addEventListener('DOMContentLoaded', function () {
 
     addRowButton.addEventListener('click', addPageRow);
 });
+
+let highlightSuggestWcagGlobally = null;
+
+function initWcagHighlighting() {
+    const configEl = document.getElementById('chapters-config');
+    if (!configEl) return;
+
+    const config = JSON.parse(configEl.textContent);
+    const kapitel1El = document.getElementById('kapitel_1');
+    const kapitel2El = document.getElementById('kapitel_2');
+    const kapitel3El = document.getElementById('kapitel_3');
+    const chapterWcagMap = config.chapterWcagMap || {};
+
+    const showRecommendedButton = document.getElementById('show-recommended-wcag');
+    const showAllButton = document.getElementById('show-all-wcag');
+    const emptyMessage = document.getElementById('wcag-empty-message');
+
+    let currentSuggestedIds = [];
+
+    function buildChapterKey() {
+        const kap1 = kapitel1El?.value?.trim() || '';
+        const kap2 = kapitel2El?.value?.trim() || '';
+        const kap3 = kapitel3El?.value?.trim() || '';
+
+        if (!kap1 || !kap2) {
+            return '';
+        }
+
+        return kap3 ? `${kap1}|${kap2}|${kap3}` : `${kap1}|${kap2}`;
+    }
+
+    function getAllWcagItems() {
+        return document.querySelectorAll('.wcag-item');
+    }
+
+    function clearSuggestedWcag() {
+    document.querySelectorAll('.wcag-item').forEach(item => {
+        item.classList.remove('is-suggested');
+        item.classList.remove('is-hidden');
+    });
+}
+
+    function applyRecommendedView() {
+        const allItems = getAllWcagItems();
+
+        allItems.forEach(item => {
+            const wcagId = Number(item.dataset.wcagId);
+            const isSuggested = currentSuggestedIds.includes(wcagId);
+
+            item.classList.toggle('is-suggested', isSuggested);
+            item.classList.toggle('is-hidden', !isSuggested);
+        });
+
+        if (emptyMessage) {
+            emptyMessage.hidden = currentSuggestedIds.length > 0;
+        }
+    }
+
+    function applyAllView() {
+        const allItems = getAllWcagItems();
+
+        allItems.forEach(item => {
+            const wcagId = Number(item.dataset.wcagId);
+            const isSuggested = currentSuggestedIds.includes(wcagId);
+
+            item.classList.remove('is-hidden');
+            item.classList.toggle('is-suggested', isSuggested);
+        });
+    }
+    
+    function highlightSuggestedWcag() {
+        clearSuggestedWcag();
+
+        const chapterKey = buildChapterKey();
+
+        const placeholder = document.getElementById('wcag-placeholder');
+        const allItems = getAllWcagItems();
+
+        // Inget kapitel är valt
+        if (!chapterKey) {
+            currentSuggestedIds = [];
+
+            // Dölj alla WCAG-objekt och visa placeholder
+            allItems.forEach(item => {
+                item.classList.add('is-hidden');
+                item.classList.remove('is-suggested');
+            });
+
+            if (placeholder) {
+                placeholder.hidden = false;
+            }
+
+            // Kapitel är valt, dölj placeholder
+            currentSuggestedIds = chapterWcagMap[chapterKey] || [];
+
+            if (placeholder) {
+                placeholder.hidden = true;
+            }
+            applyRecommendedView();
+            return;
+        }
+        currentSuggestedIds = chapterWcagMap[chapterKey] || [];
+        applyRecommendedView();
+    }
+
+    highlightSuggestWcagGlobally = highlightSuggestedWcag;
+
+    function attachEventListeners() {
+        [kapitel1El, kapitel2El, kapitel3El].forEach(element => {
+            if (element) {
+                element.addEventListener('change', highlightSuggestedWcag);
+            }
+        });
+    }
+
+    attachEventListeners();
+    highlightSuggestedWcag();
+}
+
+document.addEventListener('DOMContentLoaded', initWcagHighlighting);

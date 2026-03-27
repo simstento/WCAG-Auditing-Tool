@@ -65,3 +65,20 @@ $chapterWcagMap = [
     'Ljud och video|Syntolkning|Syntolkning' => ['1.2.5'],
     'Ljud och video|Syntolkning|Syntolkning eller transkription' => ['1.2.3'],
 ];
+
+function buildChapterWcagMapIds(array $chapterWcagMap, array $wcagList): array
+{
+    $wcagCodeToId = array_column($wcagList, 'id', 'code');
+
+    $result = [];
+
+    foreach ($chapterWcagMap as $chapterKey => $wcagCodes) {
+        $result[$chapterKey] = array_values(
+            array_filter(
+                array_map(fn($code) => $wcagCodeToId[$code] ?? null, $wcagCodes)
+            )
+        );
+    }
+
+    return $result;
+}

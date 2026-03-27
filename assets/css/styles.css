@@ -352,6 +352,45 @@ a.button {
     }
 }
 
+/*create-avvikelse.php layout-css*/
+/*WCAG Listan i create-avvikelse.php*/
+.wcag-item {
+    border: 1px solid transparent;
+    border-radius: 6px;
+    padding: 8px 10px;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.wcag-item.is-suggested {
+    background: #eef7e8;
+    border-color: #9bbb7b;
+}
+
+.wcag-item.is-suggested span::after {
+    content: " Rekommenderad";
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #2c6800;
+    margin-left: 6px;
+}
+
+.wcag-item.is-hidden {
+    display: none;
+}
+
+.wcag-toolbar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+}
+
+helper-text {
+    color: #555;
+    margin-top: 0;
+    margin-bottom: 14px;
+}
+
 /*List-rapporter.php layout-css*/
 
 .reports-page {
