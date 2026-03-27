@@ -37,7 +37,8 @@ $deviationDescription = '';
 $priority = '';
 $atgardaText = '';
 $selectedSidor = [];
-
+$isGlobal = '0';
+$globalSection = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = trim($_POST['title'] ?? '');
@@ -50,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $priority = trim($_POST['priority'] ?? '');
     $selectedSidor = $_POST['sidor'] ?? [];
     $selectedWcag = $_POST['wcag'] ?? [];
+    $globalSection = trim($_POST['global_section'] ?? '');
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
@@ -69,9 +71,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
         $errors[] = 'Prioritet måste väljas.';
     }
 
-    if (empty($selectedSidor)) {
-        $errors[] = 'Minst en sida måste väljas.';
+    if ($isGlobal === '1') {
+    if ($globalSection === '') {
+        $errors[] = 'Välj om den globala avvikelsen ska placeras under Ramverk eller Navigering.';
     }
+
+        if (!in_array($globalSection, ['Ramverk', 'Navigering'], true)) {
+            $errors[] = 'Ogiltig global sektion.';
+        }
+    } else {
+            if (empty($selectedSidor)) {
+                $errors[] = 'Minst en sida måste väljas.';
+            }
+        }
 
     if ($atgardaText === '') {
         $errors[] = 'Åtgärda måste anges.';
@@ -90,28 +102,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
             $pdo->beginTransaction();
 
             $insertAvvikelse = $pdo->prepare("
-                INSERT INTO Avvikelse (
-                    chapter_1,
-                    chapter_2,
-                    chapter_3,
-                    title,
-                    rawObservation,
-                    deviationDescription,
-                    rapport_ID,
-                    priority,
-                    atgarda_text
-                ) VALUES (
-                    :chapter_1,
-                    :chapter_2,
-                    :chapter_3,
-                    :title,
-                    :rawObservation,
-                    :deviationDescription,
-                    :rapport_ID,
-                    :priority,
-                    :atgarda_text
-                )
-            ");
+            INSERT INTO Avvikelse (
+                chapter_1,
+                chapter_2,
+                chapter_3,
+                title,
+                rawObservation,
+                deviationDescription,
+                rapport_ID,
+                priority,
+                atgarda_text,
+                is_global,
+                global_section
+            ) VALUES (
+                :chapter_1,
+                :chapter_2,
+                :chapter_3,
+                :title,
+                :rawObservation,
+                :deviationDescription,
+                :rapport_ID,
+                :priority,
+                :atgarda_text,
+                :is_global,
+                :global_section
+            )
+        ");
 
             $insertAvvikelse->execute([
                 ':chapter_1' => $kapitel1,
@@ -122,7 +138,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
                 ':deviationDescription' => $deviationDescription,
                 ':rapport_ID' => $rapportId,
                 ':priority' => $priority,
-                ':atgarda_text' => $atgardaText
+                ':atgarda_text' => $atgardaText,
+                ':is_global' => (int)$isGlobal,
+                ':global_section' => $isGlobal === '1' ? $globalSection : null
             ]);
 
             $avvikelseId = (int)$pdo->lastInsertId();
@@ -132,13 +150,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
                 VALUES (:sida_ID, :avvikelse_ID)
             ");
 
-            foreach ($selectedSidor as $sidaId) {
-                $insertKoppling->execute([
-                    ':sida_ID' => (int)$sidaId,
-                    ':avvikelse_ID' => $avvikelseId
-                ]);
+            if($isGlobal!=='1') {
+                foreach ($selectedSidor as $sidaId) {
+                    $insertKoppling->execute([
+                        ':sida_ID' => (int)$sidaId,
+                        ':avvikelse_ID' => $avvikelseId
+                    ]);
+                }
             }
-
             $insertWcag = $pdo->prepare("
                 INSERT INTO Avvikelse_has_WCAG (Avvikelse_idAvvikelse, WCAG_id)
                 VALUES (:avvikelse_ID, :wcag_ID)
@@ -247,6 +266,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
                             </span>
                         </label>
                     <?php endforeach; ?>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Placering i rapport</legend>
+
+                    <div class="form-group">
+                        <label for="is_global">Typ av avvikelse</label>
+                        <select id="is_global" name="is_global">
+                            <option value="0" <?= $isGlobal === '0' ? 'selected' : '' ?>>Sidspecifik</option>
+                            <option value="1" <?= $isGlobal === '1' ? 'selected' : '' ?>>Global</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="global-section-wrapper">
+                        <label for="global_section">Global sektion</label>
+                        <select id="global_section" name="global_section">
+                            <option value="">Välj sektion</option>
+                            <option value="Ramverk" <?= $globalSection === 'Ramverk' ? 'selected' : '' ?>>Ramverk</option>
+                            <option value="Navigering" <?= $globalSection === 'Navigering' ? 'selected' : '' ?>>Navigering</option>
+                        </select>
                     </div>
                 </fieldset>
 
