@@ -184,6 +184,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
             $atgardaText = '';
             $selectedSidor = [];
             $selectedWcag = [];
+            $isGlobal = '0';
+            $globalSection = '';
 
         } catch (Throwable $e) {
             $pdo->rollBack();
@@ -290,7 +292,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
                     </div>
                 </fieldset>
 
-                <fieldset>
+              <fieldset id="page-selection-wrapper">
                     <legend>Koppla till sida/sidor</legend>
 
                     <?php if (!$sidor): ?>

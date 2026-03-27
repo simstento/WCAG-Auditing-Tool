@@ -292,5 +292,30 @@ function initWcagHighlighting() {
     attachEventListeners();
     highlightSuggestedWcag();
 }
-
 document.addEventListener('DOMContentLoaded', initWcagHighlighting);
+
+
+function initGlobalFieldToggle() {
+    const isGlobalSelect = document.getElementById('is_global');
+    const globalSectionWrapper = document.getElementById('global-section-wrapper');
+    const pageSelectionWrapper = document.getElementById('page-selection-wrapper');
+
+    if (!isGlobalSelect) return;
+
+    function toggleGlobalFields() {
+        const isGlobal = isGlobalSelect.value === '1';
+
+        if (globalSectionWrapper) {
+            globalSectionWrapper.style.display = isGlobal ? 'block' : 'none';
+        }
+
+        if (pageSelectionWrapper) {
+            pageSelectionWrapper.style.display = isGlobal ? 'none' : 'block';
+        }
+    }
+
+    isGlobalSelect.addEventListener('change', toggleGlobalFields);
+    toggleGlobalFields();
+}
+
+document.addEventListener('DOMContentLoaded', initGlobalFieldToggle);
