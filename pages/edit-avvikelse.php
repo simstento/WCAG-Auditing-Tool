@@ -314,7 +314,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php endforeach; ?>
             </fieldset>
 
-            <button class="button type="submit">Spara ändringar</button>
+            <button class="button" type="submit">Spara ändringar</button>
         </form>
         <p>
             <a class="btn btn-secondary" href="lista-avvikelser.php?rapport_id=<?= (int)$rapportId ?>">Tillbaka till avvikelselistan</a>

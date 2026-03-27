@@ -268,6 +268,189 @@ a.button {
     }
 }
 
+/* Generate-report.php layout-css */
+
+.generate-report-page {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.generate-report-header {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.generate-report-header h1 {
+    margin: 0 0 20px 0;
+    font-size: 2.2rem;
+    line-height: 1.1;
+}
+
+.rapport-meta {
+    display: grid;
+    gap: 10px;
+}
+
+.rapport-meta p {
+    margin: 0;
+}
+
+.page-section {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.page-section h2 {
+    margin: 0 0 10px 0;
+    font-size: 1.75rem;
+    line-height: 1.2;
+    border-bottom: 1px solid #e6e6e6;
+    padding-bottom: 10px;
+}
+
+.page-meta {
+    margin: 0 0 20px 0;
+    color: #555;
+    word-break: break-word;
+}
+
+.page-section h3 {
+    margin: 28px 0 10px 0;
+    font-size: 1.25rem;
+    color: #2c6800;
+}
+
+.page-section h4 {
+    margin: 18px 0 8px 0;
+    font-size: 1.05rem;
+    color: #333;
+}
+
+.page-section h5 {
+    margin: 16px 0 10px 0;
+    font-size: 0.95rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.finding {
+    background: #fafafa;
+    border: 1px solid #e3e3e3;
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+}
+
+.finding:last-child {
+    margin-bottom: 0;
+}
+
+.finding-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.finding p {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.meta {
+    color: #444;
+}
+
+.label {
+    display: block;
+    font-weight: 600;
+    margin-top: 14px;
+    margin-bottom: 6px;
+}
+
+.empty {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 24px;
+}
+
+.actions .button {
+    width: auto;
+}
+
+@media (max-width: 800px) {
+    .generate-report-header,
+    .page-section {
+        padding: 18px;
+    }
+
+    .actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .actions .button {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Print */
+@media print {
+    .site-header,
+    .site-footer,
+    .actions {
+        display: none !important;
+    }
+
+    body {
+        background: #fff;
+    }
+
+    .generate-report-page {
+        max-width: none;
+        margin: 0;
+    }
+
+    .generate-report-header,
+    .page-section,
+    .finding {
+        border: 1px solid #ccc;
+        box-shadow: none;
+        background: #fff;
+    }
+
+    .page-section {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .finding {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    h2, h3, h4, h5 {
+        break-after: avoid;
+        page-break-after: avoid;
+    }
+}
 /*Lista-avvikelser.php layout-css*/
 
 .report-detail-page {

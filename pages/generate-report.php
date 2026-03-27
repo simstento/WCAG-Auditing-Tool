@@ -113,76 +113,79 @@ foreach ($findings as $finding) {
     $groupedByPage[$sidaNamn]['chapters'][$chapter1][$chapter2][$chapter3][] = $finding;
 }
 ?>
+<div class="generate-report-page">
+    <div class="generate-report-header">
     <h1><?= htmlspecialchars($rapport['title']) ?></h1>
-
     <div class="rapport-meta">
-        <p><strong>Kund:</strong> <?= htmlspecialchars($rapport['client']) ?></p>
-        <p><strong>Webbplats/tjänst:</strong> <?= htmlspecialchars($rapport['siteName']) ?></p>
-        <p><strong>Granskningsdatum:</strong> <?= htmlspecialchars($rapport['reviewDate']) ?></p>
-        <p><strong>Status:</strong> <?= htmlspecialchars($rapport['status']) ?></p>
-    </div>
-
-    <?php if (empty($groupedByPage)): ?>
-        <div class="empty">
-            <p>Det finns inga avvikelser registrerade för denna rapport.</p>
+            <p><strong>Kund:</strong> <?= htmlspecialchars($rapport['client']) ?></p>
+            <p><strong>Webbplats/tjänst:</strong> <?= htmlspecialchars($rapport['siteName']) ?></p>
+            <p><strong>Granskningsdatum:</strong> <?= htmlspecialchars($rapport['reviewDate']) ?></p>
+            <p><strong>Status:</strong> <?= htmlspecialchars($rapport['status']) ?></p>
         </div>
-    <?php else: ?>
+    </div>
+    
+        <?php if (empty($groupedByPage)): ?>
+            <div class="empty">
+                <p>Det finns inga avvikelser registrerade för denna rapport.</p>
+            </div>
+        <?php else: ?>
 
-        <?php foreach ($groupedByPage as $sidaNamn => $pageData): ?>
-            <section class="page-section">
-                <h2><?= htmlspecialchars($sidaNamn) ?></h2>
+            <?php foreach ($groupedByPage as $sidaNamn => $pageData): ?>
+                <section class="page-section">
+                    <h2><?= htmlspecialchars($sidaNamn) ?></h2>
 
-                <?php if (!empty($pageData['meta']['sida_url'])): ?>
-                    <p class="page-meta">
-                        <strong>URL:</strong>
-                        <?= htmlspecialchars($pageData['meta']['sida_url']) ?>
-                    </p>
-                <?php endif; ?>
+                    <?php if (!empty($pageData['meta']['sida_url'])): ?>
+                        <p class="page-meta">
+                            <strong>URL:</strong>
+                            <?= htmlspecialchars($pageData['meta']['sida_url']) ?>
+                        </p>
+                    <?php endif; ?>
 
-                <?php foreach ($pageData['chapters'] as $chapter1 => $chapter2Groups): ?>
-                    <h3><?= htmlspecialchars($chapter1) ?></h3>
+                    <?php foreach ($pageData['chapters'] as $chapter1 => $chapter2Groups): ?>
+                        <h3><?= htmlspecialchars($chapter1) ?></h3>
 
-                    <?php foreach ($chapter2Groups as $chapter2 => $chapter3Groups): ?>
-                        <h4><?= htmlspecialchars($chapter2) ?></h4>
+                        <?php foreach ($chapter2Groups as $chapter2 => $chapter3Groups): ?>
+                            <h4><?= htmlspecialchars($chapter2) ?></h4>
 
-                        <?php foreach ($chapter3Groups as $chapter3 => $chapterFindings): ?>
-                            <h5><?= htmlspecialchars($chapter3) ?></h5>
+                            <?php foreach ($chapter3Groups as $chapter3 => $chapterFindings): ?>
+                                <h5><?= htmlspecialchars($chapter3) ?></h5>
 
-                            <?php foreach ($chapterFindings as $finding): ?>
-                                <article class="finding">
-                                    <div class="finding-title">
-                                        <?= htmlspecialchars($finding['title']) ?>
-                                    </div>
+                                <?php foreach ($chapterFindings as $finding): ?>
+                                    <article class="finding">
+                                        <div class="finding-title">
+                                            <?= htmlspecialchars($finding['title']) ?>
+                                        </div>
 
-                                    <p class="meta">
-                                        <strong>Prioritet:</strong>
-                                        <?= htmlspecialchars($finding['priority']) ?>
-                                    </p>
+                                        <p class="meta">
+                                            <strong>Prioritet:</strong>
+                                            <?= htmlspecialchars($finding['priority']) ?>
+                                        </p>
 
-                                    <span class="label">Observation</span>
-                                    <p><?= nl2br(htmlspecialchars($finding['rawObservation'])) ?></p>
+                                        <span class="label">Observation</span>
+                                        <p><?= nl2br(htmlspecialchars($finding['rawObservation'])) ?></p>
 
-                                    <span class="label">Avvikelsebeskrivning</span>
-                                    <p><?= nl2br(htmlspecialchars($finding['deviationDescription'])) ?></p>
+                                        <span class="label">Avvikelsebeskrivning</span>
+                                        <p><?= nl2br(htmlspecialchars($finding['deviationDescription'])) ?></p>
 
-                                    <span class="label">Åtgärda</span>
-                                    <p><?= nl2br(htmlspecialchars($finding['atgarda_text'] ?? '')) ?></p>
+                                        <span class="label">Åtgärda</span>
+                                        <p><?= nl2br(htmlspecialchars($finding['atgarda_text'] ?? '')) ?></p>
 
-                                    <span class="label">WCAG</span>
-                                    <p><?= htmlspecialchars($finding['wcag_list'] ?? 'Ej angivet') ?></p>
-                                </article>
+                                        <span class="label">WCAG</span>
+                                        <p><?= htmlspecialchars($finding['wcag_list'] ?? 'Ej angivet') ?></p>
+                                    </article>
+                                <?php endforeach; ?>
+
                             <?php endforeach; ?>
-
                         <?php endforeach; ?>
                     <?php endforeach; ?>
-                <?php endforeach; ?>
-            </section>
-        <?php endforeach; ?>
+                </section>
+            <?php endforeach; ?>
 
-    <?php endif; ?>
-    
-    <div class="actions">
-        <a class="button" href="lista-avvikelser.php?rapport_id=<?= (int)$rapport['ID'] ?>">Till avvikelselista</a>
-        <button class="button" onclick="window.print()">Skriv ut / Spara som PDF</button>
-    </div>
+        <?php endif; ?>
+        
+        <div class="actions">
+            <a class="button" href="lista-avvikelser.php?rapport_id=<?= (int)$rapport['ID'] ?>">Till avvikelselista</a>
+            <button class="button" onclick="window.print()">Skriv ut / Spara som PDF</button>
+        </div>
+</div>
 <?php require __DIR__ . '/../includes/footer.php'; ?>
