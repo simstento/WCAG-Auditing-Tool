@@ -27,6 +27,58 @@ if (!$rapport) {
     exit;
 }
 
+$globalSql = "
+    SELECT
+        a.idAvvikelse,
+        a.title,
+        a.chapter_1,
+        a.chapter_2,
+        a.chapter_3,
+        a.rawObservation,
+        a.deviationDescription,
+        a.priority,
+        a.atgarda_text,
+        a.global_section,
+
+        GROUP_CONCAT(
+            DISTINCT CONCAT(w.code, ' (', w.level, ')')
+            ORDER BY w.code
+            SEPARATOR ', '
+        ) AS wcag_list
+
+    FROM Avvikelse a
+    LEFT JOIN Avvikelse_has_WCAG ahw
+        ON a.idAvvikelse = ahw.Avvikelse_idAvvikelse
+    LEFT JOIN WCAG w
+        ON ahw.WCAG_id = w.id
+    WHERE a.rapport_ID = :rapport_ID
+      AND a.is_global = 1
+    GROUP BY
+        a.idAvvikelse,
+        a.title,
+        a.chapter_1,
+        a.chapter_2,
+        a.chapter_3,
+        a.rawObservation,
+        a.deviationDescription,
+        a.priority,
+        a.atgarda_text,
+        a.global_section
+    ORDER BY
+        a.global_section,
+        a.chapter_1,
+        a.chapter_2,
+        a.chapter_3,
+        a.title
+";
+
+$globalStmt = $pdo->prepare($globalSql);
+$globalStmt->execute([
+    ':rapport_ID' => $rapportId
+]);
+
+$globalFindings = $globalStmt->fetchAll(PDO::FETCH_ASSOC);
+
 /**
  * Hämta data sida-för-sida.
  * Viktigt:
@@ -123,7 +175,7 @@ foreach ($findings as $finding) {
             <p><strong>Status:</strong> <?= htmlspecialchars($rapport['status']) ?></p>
         </div>
     </div>
-    
+
         <?php if (empty($groupedByPage)): ?>
             <div class="empty">
                 <p>Det finns inga avvikelser registrerade för denna rapport.</p>
