@@ -310,6 +310,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
                     <?php endif; ?>
                 </fieldset>
 
+                      <?php if (!empty($errors)): ?>
+                <div class="error-messages">
+                    <ul>
+                        <?php foreach ($errors as $error): ?>
+                            <li><?= htmlspecialchars($error) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
+            <?php if ($success): ?>
+                <div class="success-message">
+                    <?= htmlspecialchars($success) ?>
+                </div>
+            <?php endif; ?>
+
                 <div class="form-actions">
                     <button type="submit" name="save_avvikelse" value="1">
                         Spara avvikelse
