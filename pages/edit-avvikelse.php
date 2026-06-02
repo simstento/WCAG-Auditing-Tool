@@ -248,7 +248,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php if ($success !== ''): ?>
             <p><?= htmlspecialchars($success) ?></p>
     <?php endif; ?>
-
+        
 <h1>Redigera avvikelse</h1>
     <div class="card">
         <form method="post">

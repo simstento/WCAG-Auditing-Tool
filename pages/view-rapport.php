@@ -62,11 +62,11 @@ $totalSidor = count($sidor);
             <h1><?= htmlspecialchars($rapport['title']) ?></h1>
 
             <div class="rapport-meta">
-                <p><strong>Kund:</strong> <?= htmlspecialchars($rapport['client']) ?></p>
-                <p><strong>Webbplats:</strong> <?= htmlspecialchars($rapport['siteName']) ?></p>
-                <p><strong>Granskningsdatum:</strong> <?= htmlspecialchars($rapport['reviewDate']) ?></p>
-                <p><strong>Status:</strong> <?= htmlspecialchars($rapport['status']) ?></p>
-                <p><strong>Antal sidor:</strong> <?= $totalSidor ?></p>
+                <p>Kund: <?= htmlspecialchars($rapport['client']) ?></p>
+                <p>Webbplats: <?= htmlspecialchars($rapport['siteName']) ?></p>
+                <p>Granskningsdatum: <?= htmlspecialchars($rapport['reviewDate']) ?></p>
+                <p>Status: <?= htmlspecialchars($rapport['status']) ?></p>
+                <p>Antal sidor: <?= $totalSidor ?></p>
             </div>
         </section>
 
