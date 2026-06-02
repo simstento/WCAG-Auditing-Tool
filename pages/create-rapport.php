@@ -91,7 +91,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     required
                 >
             </div>
-
             <div>
                 <label for="client">Kund</label>
                 <input type="text" id="client" name="client" value="<?= htmlspecialchars($client) ?>" required>
