@@ -1,2 +1,2 @@
 <?php
-echo "TEST 123";
+echo __DIR__;
