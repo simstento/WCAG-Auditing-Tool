@@ -6,6 +6,9 @@ require __DIR__ . '/../includes/header.php';
 require __DIR__ . '/../src/db.php';
 require __DIR__ . '/../includes/chapters.php';
 require __DIR__ . '/../functions/functions.php';
+require __DIR__ . '/../includes/chapters-wcag-map.php';
+
+
 
 $stmtWcag = $pdo->query("SELECT id, code, title, level FROM WCAG ORDER BY code");
 $wcagList = $stmtWcag->fetchAll();
@@ -25,7 +28,6 @@ $selectedWcag = [];
 
 $errors = [];
 $success = '';
-
 $title = '';
 $kapitel1 = '';
 $kapitel2 = '';
@@ -35,6 +37,8 @@ $deviationDescription = '';
 $priority = '';
 $atgardaText = '';
 $selectedSidor = [];
+$isGlobal = '0';
+$globalSection = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = trim($_POST['title'] ?? '');
@@ -47,6 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $priority = trim($_POST['priority'] ?? '');
     $selectedSidor = $_POST['sidor'] ?? [];
     $selectedWcag = $_POST['wcag'] ?? [];
+    $globalSection = trim($_POST['global_section'] ?? '');
+    $isGlobal = $_POST['is_global'] ?? '0';
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
@@ -66,9 +72,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
         $errors[] = 'Prioritet måste väljas.';
     }
 
-    if (empty($selectedSidor)) {
-        $errors[] = 'Minst en sida måste väljas.';
+    if ($isGlobal === '1') {
+    if ($globalSection === '') {
+        $errors[] = 'Välj om den globala avvikelsen ska placeras under Ramverk eller Navigering.';
     }
+
+        if (!in_array($globalSection, ['Ramverk', 'Navigering'], true)) {
+            $errors[] = 'Ogiltig global sektion.';
+        }
+    } else {
+            if (empty($selectedSidor)) {
+                $errors[] = 'Minst en sida måste väljas.';
+            }
+        }
 
     if ($atgardaText === '') {
         $errors[] = 'Åtgärda måste anges.';
@@ -87,28 +103,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
             $pdo->beginTransaction();
 
             $insertAvvikelse = $pdo->prepare("
-                INSERT INTO Avvikelse (
-                    chapter_1,
-                    chapter_2,
-                    chapter_3,
-                    title,
-                    rawObservation,
-                    deviationDescription,
-                    rapport_ID,
-                    priority,
-                    atgarda_text
-                ) VALUES (
-                    :chapter_1,
-                    :chapter_2,
-                    :chapter_3,
-                    :title,
-                    :rawObservation,
-                    :deviationDescription,
-                    :rapport_ID,
-                    :priority,
-                    :atgarda_text
-                )
-            ");
+            INSERT INTO Avvikelse (
+                chapter_1,
+                chapter_2,
+                chapter_3,
+                title,
+                rawObservation,
+                deviationDescription,
+                rapport_ID,
+                priority,
+                atgarda_text,
+                is_global,
+                global_section
+            ) VALUES (
+                :chapter_1,
+                :chapter_2,
+                :chapter_3,
+                :title,
+                :rawObservation,
+                :deviationDescription,
+                :rapport_ID,
+                :priority,
+                :atgarda_text,
+                :is_global,
+                :global_section
+            )
+        ");
 
             $insertAvvikelse->execute([
                 ':chapter_1' => $kapitel1,
@@ -119,7 +139,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
                 ':deviationDescription' => $deviationDescription,
                 ':rapport_ID' => $rapportId,
                 ':priority' => $priority,
-                ':atgarda_text' => $atgardaText
+                ':atgarda_text' => $atgardaText,
+                ':is_global' => (int)$isGlobal,
+                ':global_section' => $isGlobal === '1' ? $globalSection : null
             ]);
 
             $avvikelseId = (int)$pdo->lastInsertId();
@@ -129,13 +151,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
                 VALUES (:sida_ID, :avvikelse_ID)
             ");
 
-            foreach ($selectedSidor as $sidaId) {
-                $insertKoppling->execute([
-                    ':sida_ID' => (int)$sidaId,
-                    ':avvikelse_ID' => $avvikelseId
-                ]);
+            if($isGlobal!=='1') {
+                foreach ($selectedSidor as $sidaId) {
+                    $insertKoppling->execute([
+                        ':sida_ID' => (int)$sidaId,
+                        ':avvikelse_ID' => $avvikelseId
+                    ]);
+                }
             }
-
             $insertWcag = $pdo->prepare("
                 INSERT INTO Avvikelse_has_WCAG (Avvikelse_idAvvikelse, WCAG_id)
                 VALUES (:avvikelse_ID, :wcag_ID)
@@ -162,6 +185,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
             $atgardaText = '';
             $selectedSidor = [];
             $selectedWcag = [];
+            $isGlobal = '0';
+            $globalSection = '';
 
         } catch (Throwable $e) {
             $pdo->rollBack();
@@ -187,6 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
                 renderSelect('kapitel_1', getChapterOptions($chapters), $kapitel1);
                 renderSelect('kapitel_2', getChapterOptions($chapters, $kapitel1), $kapitel2);
                 renderSelect('kapitel_3', getChapterOptions($chapters, $kapitel1, $kapitel2), $kapitel3);
+                $chapterWcagMapIds = buildChapterWcagMapIds($chapterWcagMap, $wcagList);
                 ?>
 
                 <div class="form-group">
@@ -216,17 +242,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
 
                 <fieldset>
                     <legend>WCAG-kriterier</legend>
+                    <div class="wcag-toolbar">
+                        <button type="button" class="button secondary small" id="show-recommended-wcag">
+                            Visa bara rekommenderade
+                        </button>
+
+                        <button type="button" class="button secondary small" id="show-all-wcag">
+                            Visa alla WCAG
+                        </button>
+                    </div>
+                <p id="wcag-empty-message" class="helper-text" hidden>
+                    Det finns inga rekommenderade WCAG-kriterier för det valda kapitlet.
+                </p>
                     <div class="checkbox-grid">
                         <?php foreach ($wcagList as $wcag): ?>
-                            <label>
-                                <input type="checkbox" name="wcag[]" value="<?= (int)$wcag['id'] ?>">
-                                <?= htmlspecialchars($wcag['code']) ?> – <?= htmlspecialchars($wcag['title']) ?>
-                            </label>
-                        <?php endforeach; ?>
+                        <label class="checkbox-item wcag-item" data-wcag-id="<?= (int)$wcag['id'] ?>">
+                            <input
+                                type="checkbox"
+                                name="wcag[]"
+                                value="<?= (int)$wcag['id'] ?>"
+                                <?= in_array((string)$wcag['id'], $selectedWcag, true) ? 'checked' : '' ?>>
+                            <span>
+                                <?= htmlspecialchars($wcag['code']) ?> –
+                                <?= htmlspecialchars($wcag['title']) ?>
+                                (<?= htmlspecialchars($wcag['level']) ?>)
+                            </span>
+                        </label>
+                    <?php endforeach; ?>
                     </div>
                 </fieldset>
 
                 <fieldset>
+                    <legend>Placering i rapport</legend>
+
+                    <div class="form-group">
+                        <label for="is_global">Typ av avvikelse</label>
+                        <select id="is_global" name="is_global">
+                            <option value="0" <?= $isGlobal === '0' ? 'selected' : '' ?>>Sidspecifik</option>
+                            <option value="1" <?= $isGlobal === '1' ? 'selected' : '' ?>>Global</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="global-section-wrapper">
+                        <label for="global_section">Global sektion</label>
+                        <select id="global_section" name="global_section">
+                            <option value="">Välj sektion</option>
+                            <option value="Ramverk" <?= $globalSection === 'Ramverk' ? 'selected' : '' ?>>Ramverk</option>
+                            <option value="Navigering" <?= $globalSection === 'Navigering' ? 'selected' : '' ?>>Navigering</option>
+                        </select>
+                    </div>
+                </fieldset>
+
+              <fieldset id="page-selection-wrapper">
                     <legend>Koppla till sida/sidor</legend>
 
                     <?php if (!$sidor): ?>
@@ -234,7 +301,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
                     <?php else: ?>
                         <div class="checkbox-grid">
                             <?php foreach ($sidor as $sida): ?>
-                                <label>
+                                <label class="checkbox-item">
                                     <input type="checkbox" name="sidor[]" value="<?= (int)$sida['ID'] ?>">
                                     <?= htmlspecialchars($sida['name']) ?>
                                 </label>
@@ -242,6 +309,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
                         </div>
                     <?php endif; ?>
                 </fieldset>
+
+                      <?php if (!empty($errors)): ?>
+                <div class="error-messages">
+                    <ul>
+                        <?php foreach ($errors as $error): ?>
+                            <li><?= htmlspecialchars($error) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
+            <?php if ($success): ?>
+                <div class="success-message">
+                    <?= htmlspecialchars($success) ?>
+                </div>
+            <?php endif; ?>
 
                 <div class="form-actions">
                     <button type="submit" name="save_avvikelse" value="1">
@@ -262,6 +344,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_avvikelse'])) {
     'selectedKapitel1' => $kapitel1,
     'selectedKapitel2' => $kapitel2,
     'selectedKapitel3' => $kapitel3,
+    'chapterWcagMap' => $chapterWcagMapIds
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
 </script>
 <script src="../assets/js/chapters.js"></script>

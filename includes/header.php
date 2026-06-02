@@ -12,10 +12,10 @@ $basePath = ''; // ändra till din root
 <body>
 <header class="site-header">
     <div class="container header-inner">
-        <h1 class="logo">WCAG Tool</h1>
+        <h1 class="logo">WCAG Granskningsverktyg</h1>
 
         <nav class="main-nav">
-            <a href="<?= $basePath ?>../pages/list-rapporter.php">Rapporter</a>
+            <a href="<?= $basePath ?>../pages/list-rapporter.php">Mina rapporter</a>
             <a href="<?= $basePath ?>../pages/create-rapport.php">Ny rapport</a>
         </nav>
     </div>

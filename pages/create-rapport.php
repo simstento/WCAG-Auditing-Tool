@@ -117,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="actions">
-                <button class="button" type="submit">Spara rapport</button>
+                <button class="button" type="submit">Skapa rapport</button>
                 <a href="list-rapporter.php" class="button">Avbryt</a>
             </div>
         </form>

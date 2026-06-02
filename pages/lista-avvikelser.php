@@ -44,6 +44,8 @@ $sql = "
         a.priority,
         a.rawObservation,
         a.deviationDescription,
+        a.is_global,
+        a.global_section,
         GROUP_CONCAT(s.name ORDER BY s.name SEPARATOR ', ') AS sida_namn
     FROM Avvikelse a
     LEFT JOIN sida_has_Avvikelse sha
@@ -120,8 +122,10 @@ $avvikelser = $stmt->fetchAll();
                             </p>
 
                             <p class="meta">
-                                <strong>Sidor:</strong>
-                                <?= htmlspecialchars($avvikelse['sida_namn'] ?? 'Inga kopplade sidor') ?>
+                            <strong><?= (int)$avvikelse['is_global'] === 1 ? 'Sida:' : 'Sidor:' ?></strong>
+                                <?= (int)$avvikelse['is_global'] === 1
+                                    ? htmlspecialchars($avvikelse['global_section'] ?? '')
+                                    : htmlspecialchars($avvikelse['sida_namn'] ?? 'Inga kopplade sidor') ?>
                             </p>
 
                             <p class="section-label">Raw observation</p>
