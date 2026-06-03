@@ -76,12 +76,14 @@ $stmt->execute([
 
 $avvikelser = $stmt->fetchAll();
 ?>
-
+    <div class="report-header">
+        <h1><?= htmlspecialchars($rapport['title']) ?></h1>
+     </div>
     <div class="report-detail-page">
     <div class="report-detail-layout">
         <aside class="report-sidebar">
             <div class="report-sidebar-card">
-                <h1><?= htmlspecialchars($rapport['title']) ?></h1>
+                <h2>Rapportinfo</h2>
 
                 <div class="rapport-meta">
                     <p><strong>Kund:</strong> <?= htmlspecialchars($rapport['client']) ?></p>
